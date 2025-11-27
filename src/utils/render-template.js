@@ -32,7 +32,7 @@ function renderTemplate(template, data = {}) {
         `;
       }
 
-      const textContent = escapeHtml(applyPlaceholders(el.content || '', data));
+      const textContent = escapeHtml(resolveTextContent(el, data));
       return `
         <div style="${style}
           font-size: ${el.fontSize || 16}px;
@@ -100,6 +100,14 @@ function applyPlaceholders(str, data) {
     }
     return '';
   });
+}
+
+function resolveTextContent(element, data) {
+  if (element.variableName && hasOwn(data, element.variableName)) {
+    const value = data[element.variableName];
+    return value == null ? '' : `${value}`;
+  }
+  return applyPlaceholders(element.content || '', data);
 }
 
 function escapeHtml(str) {
