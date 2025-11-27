@@ -1,5 +1,4 @@
-import React from 'react';
-import Draggable from 'react-draggable';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 const gridPattern =
   'repeating-linear-gradient(135deg, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 16px, transparent 16px, transparent 32px)';
@@ -14,6 +13,8 @@ export default function Canvas({
   zoom = 1,
   showGrid,
 }) {
+  const interactionRef = useRef(null);
+
   const backgroundStyle = showGrid
     ? {
         backgroundColor: '#4a4a4a',
@@ -21,6 +22,56 @@ export default function Canvas({
         backgroundSize: '40px 40px',
       }
     : { backgroundColor: '#1f1f1f' };
+
+  const handlePointerMove = useCallback(
+    (event) => {
+      const interaction = interactionRef.current;
+      if (!interaction || interaction.type !== 'drag') {
+        return;
+      }
+      const deltaX = (event.clientX - interaction.startClientX) / zoom;
+      const deltaY = (event.clientY - interaction.startClientY) / zoom;
+      const nextX = clamp(interaction.originX + deltaX, 0, Math.max(0, width - interaction.width));
+      const nextY = clamp(interaction.originY + deltaY, 0, Math.max(0, height - interaction.height));
+      onUpdate(interaction.id, { x: Math.round(nextX), y: Math.round(nextY) });
+    },
+    [onUpdate, width, height, zoom]
+  );
+
+  const handlePointerUp = useCallback(function onPointerUp() {
+    interactionRef.current = null;
+    window.removeEventListener('pointermove', handlePointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+  }, [handlePointerMove]);
+
+  const startDrag = useCallback(
+    (event, element) => {
+      if (event.button !== 0) return;
+      event.stopPropagation();
+      onSelect(element.id);
+      interactionRef.current = {
+        type: 'drag',
+        id: element.id,
+        pointerId: event.pointerId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        originX: element.x,
+        originY: element.y,
+        width: element.width,
+        height: element.height,
+      };
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+    },
+    [handlePointerMove, handlePointerUp, onSelect]
+  );
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [handlePointerMove, handlePointerUp]);
 
   return (
     <div onClick={() => onSelect(null)}>
@@ -37,49 +88,36 @@ export default function Canvas({
           style={{ width, height, transform: `scale(${zoom})`, ...backgroundStyle }}
         >
           {elements.map((el, index) => (
-            <Draggable
+            <div
               key={el.id}
-              position={{ x: el.x, y: el.y }}
-              onStart={(e) => {
-                e.stopPropagation();
+              className={`absolute cursor-move transition-all duration-150 ${
+                selectedId === el.id
+                  ? 'ring-2 ring-purple-400 shadow-lg'
+                  : 'ring-1 ring-transparent hover:ring-purple-200'
+              }`}
+              style={{
+                width: el.width,
+                height: el.height,
+                transformOrigin: 'top left',
+                left: el.x,
+                top: el.y,
+                opacity: el.opacity ?? 1,
+                zIndex: index + 1,
+              }}
+              onPointerDown={(event) => startDrag(event, el)}
+              onClick={(event) => {
+                event.stopPropagation();
                 onSelect(el.id);
               }}
-              onDrag={(e, data) => onUpdate(el.id, { x: data.x, y: data.y })}
-              onStop={(e, data) => onUpdate(el.id, { x: data.x, y: data.y })}
-              bounds={{
-                left: 0,
-                top: 0,
-                right: Math.max(0, width - el.width),
-                bottom: Math.max(0, height - el.height),
-              }}
-              scale={zoom}
             >
-              <div
-                className={`absolute cursor-move transition-all duration-150 ${
-                  selectedId === el.id
-                    ? 'ring-2 ring-purple-400 shadow-lg'
-                    : 'ring-1 ring-transparent hover:ring-purple-200'
-                }`}
-                style={{
-                  width: el.width,
-                  height: el.height,
-                  opacity: el.opacity ?? 1,
-                  zIndex: index + 1,
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelect(el.id);
-                }}
-              >
-                {renderElementContent(el)}
+              {renderElementContent(el)}
 
-                {el.variableName && (
-                  <div className="absolute -top-5 left-0 bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full">
-                    {`{{${el.variableName}}}`}
-                  </div>
-                )}
-              </div>
-            </Draggable>
+              {el.variableName && (
+                <div className="absolute -top-5 left-0 bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full">
+                  {`{{${el.variableName}}}`}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -133,4 +171,8 @@ function resolveJustify(value = 'left') {
   if (value === 'center') return 'center';
   if (value === 'right') return 'flex-end';
   return 'flex-start';
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
