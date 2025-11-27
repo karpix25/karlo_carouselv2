@@ -28,6 +28,13 @@ const DEFAULT_EXPORT_SETTINGS = {
 const uid = () =>
   (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 
+const SIDE_PANEL_TABS = [
+  { id: 'layers', label: 'Layers' },
+  { id: 'element', label: 'Element' },
+  { id: 'templates', label: 'Templates' },
+  { id: 'export', label: 'Export' },
+];
+
 function App() {
   const [elements, setElements] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -40,6 +47,7 @@ function App() {
   const [showGrid, setShowGrid] = useState(true);
   const [lockDimensions, setLockDimensions] = useState(false);
   const [exportSettings, setExportSettings] = useState(DEFAULT_EXPORT_SETTINGS);
+  const [sidePanelTab, setSidePanelTab] = useState('element');
 
   const fetchTemplates = async () => {
     try {
@@ -287,29 +295,56 @@ function App() {
           <ZoomControls zoom={zoom} onZoomChange={setZoom} />
         </div>
 
-        <div className="w-96 bg-white border-l overflow-y-auto p-4 space-y-4">
-          <LayersPanel
-            elements={elements}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            onDuplicate={duplicateElement}
-            onDelete={removeElement}
-            onMoveLayer={moveLayer}
-          />
+        <div className="w-96 bg-white border-l flex flex-col">
+          <div className="grid grid-cols-4 gap-2 p-3 border-b bg-gray-50">
+            {SIDE_PANEL_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setSidePanelTab(tab.id)}
+                className={`text-xs font-semibold rounded-full px-2 py-1 ${
+                  sidePanelTab === tab.id
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-white text-gray-600 border border-gray-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-          <PropertiesPanel
-            element={currentElement}
-            onChange={(updates) => currentElement && updateElement(currentElement.id, updates)}
-          />
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {sidePanelTab === 'layers' && (
+              <LayersPanel
+                elements={elements}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                onDuplicate={duplicateElement}
+                onDelete={removeElement}
+                onMoveLayer={moveLayer}
+              />
+            )}
 
-          <TemplateLibrary
-            templates={templates}
-            onLoad={loadTemplate}
-            currentTemplateId={currentTemplateId}
-            onCreateNew={handleCreateNewTemplate}
-          />
+            {sidePanelTab === 'element' && (
+              <PropertiesPanel
+                element={currentElement}
+                onChange={(updates) => currentElement && updateElement(currentElement.id, updates)}
+              />
+            )}
 
-          <ExportSettingsPanel settings={exportSettings} onChange={handleExportSettingChange} />
+            {sidePanelTab === 'templates' && (
+              <TemplateLibrary
+                templates={templates}
+                onLoad={loadTemplate}
+                currentTemplateId={currentTemplateId}
+                onCreateNew={handleCreateNewTemplate}
+              />
+            )}
+
+            {sidePanelTab === 'export' && (
+              <ExportSettingsPanel settings={exportSettings} onChange={handleExportSettingChange} />
+            )}
+          </div>
         </div>
       </div>
     </div>
