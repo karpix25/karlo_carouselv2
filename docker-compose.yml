@@ -1,6 +1,6 @@
 services:
   export-html:
-    container_name: export-html
+    container_name: export-carousel
     platform: linux/amd64
     volumes:
       - ./src:/service/src
