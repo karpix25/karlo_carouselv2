@@ -1,4 +1,5 @@
 import React, { useRef, useCallback } from 'react';
+import { getFontStack } from '../constants/fonts';
 
 const gridPattern =
   'repeating-linear-gradient(135deg, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 16px, transparent 16px, transparent 32px)';
@@ -167,8 +168,11 @@ function renderElementContent(el) {
         fontWeight: el.fontWeight || 400,
         textAlign: el.textAlign || 'left',
         justifyContent: resolveJustify(el.textAlign),
-        lineHeight: el.lineHeight || '1.2',
+        lineHeight: el.lineHeight || 1.2,
         display: 'flex',
+        fontFamily: getFontStack(el.fontFamily),
+        letterSpacing: typeof el.letterSpacing === 'number' ? `${el.letterSpacing}px` : undefined,
+        textTransform: el.textTransform || 'none',
       }}
     >
       {el.content || ''}
