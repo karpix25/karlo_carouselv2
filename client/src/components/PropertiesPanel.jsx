@@ -1,4 +1,5 @@
 import React from 'react';
+import FONT_OPTIONS, { DEFAULT_FONT, getFontStack } from '../constants/fonts';
 
 export default function PropertiesPanel({ element, onChange }) {
   if (!element) {
@@ -18,6 +19,8 @@ export default function PropertiesPanel({ element, onChange }) {
       onChange({ [field]: value });
     }
   };
+
+  const currentFontFamily = element.fontFamily || DEFAULT_FONT;
 
   return (
     <div className="border rounded-2xl p-4 space-y-4">
@@ -101,6 +104,27 @@ export default function PropertiesPanel({ element, onChange }) {
 
       {isText && (
         <>
+          <Field label="Font family">
+            <div className="space-y-2">
+              <select
+                value={currentFontFamily}
+                onChange={(e) => onChange({ fontFamily: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2"
+              >
+                {FONT_OPTIONS.map((font) => (
+                  <option key={font.value} value={font.value}>
+                    {font.label}
+                  </option>
+                ))}
+              </select>
+              <div
+                className="border rounded-lg px-3 py-2 text-sm text-gray-700"
+                style={{ fontFamily: getFontStack(currentFontFamily) }}
+              >
+                The quick brown fox
+              </div>
+            </div>
+          </Field>
           <Field label="Font size">
             <input
               type="number"
@@ -118,6 +142,43 @@ export default function PropertiesPanel({ element, onChange }) {
               {[300, 400, 500, 600, 700].map((weight) => (
                 <option key={weight} value={weight}>
                   {weight}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Line height">
+              <input
+                type="number"
+                step="0.1"
+                min="0.8"
+                max="3"
+                value={element.lineHeight ?? 1.2}
+                onChange={(e) => handleNumberChange('lineHeight')(parseFloat(e.target.value))}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </Field>
+            <Field label="Letter spacing (px)">
+              <input
+                type="number"
+                step="0.5"
+                min="-10"
+                max="20"
+                value={element.letterSpacing ?? 0}
+                onChange={(e) => handleNumberChange('letterSpacing')(parseFloat(e.target.value))}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </Field>
+          </div>
+          <Field label="Text transform">
+            <select
+              value={element.textTransform || 'none'}
+              onChange={(e) => onChange({ textTransform: e.target.value })}
+              className="w-full border rounded-lg px-3 py-2"
+            >
+              {['none', 'uppercase', 'lowercase', 'capitalize'].map((transform) => (
+                <option key={transform} value={transform}>
+                  {transform}
                 </option>
               ))}
             </select>
