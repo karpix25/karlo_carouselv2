@@ -78,7 +78,7 @@ function renderTemplate(template, data = {}) {
 }
 
 function resolveContent(element, data) {
-  if (element.variableName && data[element.variableName] != null) {
+  if (element.variableName && hasOwn(data, element.variableName)) {
     return data[element.variableName];
   }
   if (typeof element.content === 'string') {
@@ -94,8 +94,11 @@ function resolveContent(element, data) {
 function applyPlaceholders(str, data) {
   return str.replace(/{{(.*?)}}/g, (_, key) => {
     const trimmed = key.trim();
-    const value = data[trimmed];
-    return value == null ? '' : value;
+    if (hasOwn(data, trimmed)) {
+      const value = data[trimmed];
+      return value == null ? '' : value;
+    }
+    return '';
   });
 }
 
@@ -117,6 +120,10 @@ function resolveAlignment(value = 'left') {
     default:
       return 'flex-start';
   }
+}
+
+function hasOwn(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
 module.exports = { renderTemplate };
