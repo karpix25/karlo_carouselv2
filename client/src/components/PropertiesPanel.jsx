@@ -224,6 +224,35 @@ export default function PropertiesPanel({ element, onChange }) {
                 <option value="capitalize">Capitalize</option>
               </select>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-gray-500">Highlighting (for **text** syntax)</label>
+              <div className="flex gap-2">
+                <div
+                  className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0"
+                  style={{ backgroundColor: element.highlightColor || '#ffeb3b' }}
+                >
+                  <input
+                    type="color"
+                    value={element.highlightColor || '#ffeb3b'}
+                    onChange={(e) => onChange({ highlightColor: e.target.value })}
+                    className="opacity-0 w-full h-full cursor-pointer"
+                  />
+                </div>
+                <div className="flex-1 border rounded-lg flex items-center px-3 bg-gray-50">
+                  <span className="text-gray-400 mr-2">#</span>
+                  <input
+                    type="text"
+                    value={(element.highlightColor || '#ffeb3b').replace('#', '').toUpperCase()}
+                    onChange={(e) => onChange({ highlightColor: `#${e.target.value}` })}
+                    className="bg-transparent w-full outline-none text-sm font-mono"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400">
+                💡 Use **text** in your content to highlight words with this color
+              </p>
+            </div>
           </CollapsibleSection>
 
           <hr className="border-gray-100" />

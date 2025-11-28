@@ -36,7 +36,23 @@ function renderTemplate(template, data = {}) {
         `;
       }
 
-      const textContent = escapeHtml(resolveTextContent(el, data).trim());
+      const rawText = resolveTextContent(el, data).trim();
+
+      // Parse **text** for highlighting
+      const parseHighlightedText = (text, highlightColor) => {
+        if (!text) return '';
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map(part => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            const content = part.slice(2, -2);
+            return `<span style="background-color: ${highlightColor || '#ffeb3b'}; padding: 2px 6px; border-radius: 4px;">${escapeHtml(content)}</span>`;
+          }
+          return escapeHtml(part);
+        }).join('');
+      };
+
+      const textContent = parseHighlightedText(rawText, el.highlightColor);
+
       return `
         <div style="${style}
           font-family: ${getFontStackValue(el.fontFamily)};

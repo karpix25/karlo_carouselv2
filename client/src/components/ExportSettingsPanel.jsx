@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 
 const imageFormats = [
   { label: 'Automatic', value: 'automatic' },
@@ -17,9 +18,19 @@ const pdfQuality = [
 ];
 
 export default function ExportSettingsPanel({ settings, onChange }) {
+  const [collapsedSections, setCollapsedSections] = React.useState({});
+
+  const toggleSection = (section) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   return (
     <section className="space-y-4">
-      <SettingsCard title="Image settings">
+      <SettingsCard
+        title="Image settings"
+        isCollapsed={collapsedSections.image}
+        onToggle={() => toggleSection('image')}
+      >
         <SettingsField label="Image format">
           <select
             className="w-full bg-transparent focus:outline-none"
@@ -58,7 +69,11 @@ export default function ExportSettingsPanel({ settings, onChange }) {
         </SettingsField>
       </SettingsCard>
 
-      <SettingsCard title="PDF settings">
+      <SettingsCard
+        title="PDF settings"
+        isCollapsed={collapsedSections.pdf}
+        onToggle={() => toggleSection('pdf')}
+      >
         <SettingsField label="Image quality">
           <select
             className="w-full bg-transparent focus:outline-none"
@@ -100,11 +115,20 @@ export default function ExportSettingsPanel({ settings, onChange }) {
   );
 }
 
-function SettingsCard({ title, children }) {
+function SettingsCard({ title, children, isCollapsed, onToggle }) {
   return (
-    <div className="border rounded-2xl p-4 space-y-3">
-      <h3 className="text-sm font-semibold text-purple-900 uppercase">{title}</h3>
-      {children}
+    <div className="border rounded-2xl overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between bg-purple-50 hover:bg-purple-100 px-4 py-3 transition-colors"
+      >
+        <h3 className="text-sm font-semibold text-purple-900 uppercase">{title}</h3>
+        <ChevronDown
+          size={20}
+          className={`text-purple-900 transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+        />
+      </button>
+      {!isCollapsed && <div className="p-4 space-y-3">{children}</div>}
     </div>
   );
 }

@@ -231,6 +231,30 @@ function renderElementContent(el) {
     );
   }
 
+  // Parse **text** for highlighting
+  const parseHighlightedText = (text, highlightColor) => {
+    if (!text) return '';
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const content = part.slice(2, -2);
+        return (
+          <span
+            key={index}
+            style={{
+              backgroundColor: highlightColor || '#ffeb3b',
+              padding: '2px 6px',
+              borderRadius: '4px',
+            }}
+          >
+            {content}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div
       className="w-full h-full flex"
@@ -252,7 +276,7 @@ function renderElementContent(el) {
         whiteSpace: 'pre-line',
       }}
     >
-      {(el.content_preview || el.content || '').trim()}
+      {parseHighlightedText((el.content_preview || el.content || '').trim(), el.highlightColor)}
     </div>
   );
 }
