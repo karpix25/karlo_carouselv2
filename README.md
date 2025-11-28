@@ -1,125 +1,175 @@
-# Export HTML to PDF Service
+# Сервис экспорта HTML в PDF и Изображения
 
-This is a simple Docker container that runs a JSON API service that allows HTML to be converted to PDF or PNG/JPG images. This service accomplishes this by using a [Chrome headless browser](https://github.com/GoogleChrome/puppeteer) to ensure full rendering capabilities on par with Google Chrome.
+Это сервис на базе Docker, предоставляющий JSON API для конвертации HTML в PDF или изображения (PNG/JPG). Сервис использует [Chrome headless browser (Puppeteer)](https://github.com/GoogleChrome/puppeteer), что обеспечивает качество рендеринга, идентичное Google Chrome.
 
-_Security Note: This is intended to run as a micro service - do not directly expose to the public internet_
+Также сервис включает в себя систему управления шаблонами, позволяющую создавать визуальные макеты и генерировать изображения на их основе с подстановкой данных.
 
-## Usage
+_Примечание по безопасности: Сервис предназначен для работы как микросервис внутри закрытой сети. Не выставляйте его в публичный доступ без дополнительной защиты._
+
+## Запуск
+
+### Через Docker
 
 ```bash
-docker run  -p 2305:2305 bedrockio/export-html
+docker run -p 2305:2305 bedrockio/export-html
 ```
 
-Or:
+### Локальный запуск (для разработки)
 
-```
+```bash
 git clone git@github.com:bedrockio/export-html.git
 cd export-html
 yarn install
 yarn start
 ```
 
-## Generating a PDF
+Сервис будет доступен по адресу `http://localhost:2305`.
 
-```bash
-curl \
--d '{"html": "<h1>Hello World</h1>"}' \
--H "Content-Type: application/json" \
---output hello.pdf \
--XPOST "http://localhost:2305/1/pdf"
+---
+
+## Работа с шаблонами
+
+Сервис позволяет создавать шаблоны (слои с текстом, изображениями, фигурами) и рендерить их, подставляя динамические данные.
+
+### Структура шаблона
+
+Шаблон представляет собой JSON-объект, содержащий размеры холста и массив элементов.
+
+Пример элемента текста с переменной:
+```json
+{
+  "type": "text",
+  "content": "Привет, {{name}}!",
+  "x": 100,
+  "y": 100,
+  "fontSize": 24,
+  "color": "#000000"
+}
 ```
 
-Now open `hello.pdf`
+При рендеринге, если передать данные `{"name": "Мир"}`, текст превратится в "Привет, Мир!".
 
-The default format is "Letter" (US) but it can be set to other paper formats like so:
+---
 
-```bash
-curl \
--d '{"html": "<h1>Hello World</h1>", "export": {"format": "A4"}}' \
--H "Content-Type: application/json" \
---output hello-a4.pdf \
--XPOST "http://localhost:2305/1/pdf"
+## API Эндпоинты
+
+### 1. Проверка состояния
+
+#### `GET /health`
+Проверка работоспособности сервиса.
+**Ответ:**
+```json
+{ "servedAt": "2023-10-27T10:00:00.000Z" }
 ```
 
-## Generating a PNG
-
-```bash
-curl \
--d '{"html": "<h1>Hello World</h1>", "export": {"type": "png"}}' \
--H "Content-Type: application/json" \
---output hello.png \
--XPOST "http://localhost:2305/1/screenshot"
+#### `GET /check-status`
+Возвращает количество открытых страниц в браузере.
+**Ответ:**
+```json
+{ "pageCount": 0 }
 ```
 
-Now open `hello.png`
+---
 
-## Advanced Options
+### 2. Базовая конвертация (Puppeteer)
 
-Each API call allows Puppeteer options via `body.export`
+#### `POST /1/screenshot`
+Создание скриншота из URL или HTML.
 
-- [POST /1/pdf](https://pptr.dev/#?product=Puppeteer&version=v8.0.0&show=api-pagepdfoptions)
-- [POST /1/screenshot](https://pptr.dev/#?product=Puppeteer&version=v8.0.0&show=api-pagescreenshotoptions)
-
-## Kubernetes Deployment Notes
-
-This module runs a full browser and each request will open a virtual broeser tab. Many concurrent requests can increase memory usage signicantly.
-
-Here's an example of a Kubernetes deployment that limits resources (this is used in production for generating invoices):
-
+**Тело запроса:**
+```json
+{
+  "html": "<h1>Привет Мир</h1>",
+  "export": {
+    "type": "png",
+    "fullPage": true
+  }
+}
 ```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: export-html-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      name: export-html
-  template:
-    metadata:
-      labels:
-        name: export-html
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: name
-                      operator: In
-                      values:
-                        - export-html
-                topologyKey: kubernetes.io/hostname
-      containers:
-        - image: bedrockio/export-html
-          imagePullPolicy: Always
-          name: export-html
-          resources:
-            requests:
-              memory: "1000Mi"
-              cpu: "500m"
-            limits:
-              memory: "3000Mi"
-              cpu: "2500m"
-          env:
-            - name: NODE_ENV
-              value: "production"
-            - name: ENV_NAME
-              value: "production"
-          ports:
-            - name: http-server
-              containerPort: 2305
-          volumeMounts:
-            - name: export-html-cache
-              mountPath: /workdir/data
-      volumes:
-        - name: export-html-cache
-          emptyDir: {}
+Или через URL:
+```json
+{
+  "url": "https://google.com",
+  "export": { "type": "jpeg", "quality": 80 }
+}
 ```
 
-## Credits
+#### `POST /1/pdf`
+Создание PDF документа.
 
-This service is based on the excellent [Puppeteer module](https://github.com/GoogleChrome/puppeteer)
+**Тело запроса:**
+```json
+{
+  "html": "<h1>Счет #123</h1>",
+  "export": {
+    "format": "A4",
+    "printBackground": true
+  }
+}
+```
+
+---
+
+### 3. Управление шаблонами
+
+#### `GET /templates`
+Получить список всех доступных шаблонов.
+
+**Ответ:**
+```json
+[
+  { "id": "uuid-...", "name": "Мой шаблон", ... },
+  ...
+]
+```
+
+#### `POST /templates`
+Создать новый или обновить существующий шаблон.
+
+**Тело запроса:**
+```json
+{
+  "id": "optional-uuid",
+  "name": "Новый шаблон",
+  "width": 1080,
+  "height": 1080,
+  "elements": [...]
+}
+```
+
+#### `GET /templates/:id`
+Получить полную информацию о шаблоне по его ID.
+
+---
+
+### 4. Рендеринг шаблонов
+
+#### `POST /templates/:id/render`
+Генерирует изображение (PNG) на основе шаблона, подставляя переданные данные.
+
+**Параметры URL:**
+*   `id`: ID шаблона
+
+**Тело запроса (данные для подстановки):**
+```json
+{
+  "title": "Заголовок поста",
+  "image_url": "https://example.com/image.jpg",
+  "price": "1000 руб."
+}
+```
+
+Переменные в шаблоне (например `{{title}}`) будут заменены на значения из тела запроса.
+
+**Ответ:**
+Бинарные данные изображения (Content-Type: image/png).
+
+---
+
+## Развертывание в Kubernetes
+
+Сервис запускает полноценный браузер Chrome. Каждый запрос открывает новую вкладку. Большое количество одновременных запросов может потреблять много памяти.
+
+Рекомендуется устанавливать лимиты ресурсов (requests/limits) и использовать `podAntiAffinity`, чтобы распределять поды по разным нодам.
+
+Пример конфигурации Deployment см. в файле `k8s-example.yaml` (если есть) или используйте стандартные практики для Node.js приложений с Puppeteer.
