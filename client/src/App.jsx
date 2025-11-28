@@ -317,3 +317,17 @@ function App() {
           />
 
           <TemplateLibrary
+            templates={templates}
+            onLoad={loadTemplate}
+            currentTemplateId={currentTemplateId}
+            onCreateNew={handleCreateNewTemplate}
+          />
+
+          <ExportSettingsPanel settings={exportSettings} onChange={handleExportSettingChange} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
