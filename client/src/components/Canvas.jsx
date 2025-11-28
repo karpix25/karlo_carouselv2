@@ -247,7 +247,6 @@ function renderElementContent(el) {
                 padding: '3px 8px',
                 borderRadius: '6px',
                 display: 'inline',
-                whiteSpace: 'nowrap',
               }}
             >
               {content}
