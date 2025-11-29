@@ -186,6 +186,20 @@ export default function PropertiesPanel({ element, onChange }) {
             </div>
 
             <div className="space-y-2">
+              <label className="text-xs text-gray-500">Resizing</label>
+              <select
+                value={element.resizing || 'plain'}
+                onChange={(e) => onChange({ resizing: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="plain">Plain text</option>
+                <option value="fitty">Fitty (Auto-scale)</option>
+                <option value="clamp">Clamp (3 lines)</option>
+                <option value="single">Single Line</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
               <label className="text-xs text-gray-500">Style</label>
               <div className="flex gap-2">
                 <StyleButton

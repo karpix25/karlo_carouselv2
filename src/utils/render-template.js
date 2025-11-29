@@ -55,13 +55,26 @@ function renderTemplate(template, data = {}) {
       const textContent = parseHighlightedText(rawText, el.highlightColor);
       const shadowStyle = el.shadow ? `text-shadow: ${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'};` : '';
 
+      let resizingStyle = 'white-space: pre-wrap;';
+      let fittyClass = '';
+
+      if (el.resizing === 'single') {
+        resizingStyle = 'white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
+      } else if (el.resizing === 'clamp') {
+        resizingStyle = 'display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;';
+      } else if (el.resizing === 'fitty') {
+        resizingStyle = 'white-space: pre-wrap; word-break: break-word;';
+        fittyClass = 'fitty-text';
+      }
+
       return `
         <div style="${style}
           background-color: ${el.backgroundColor || 'transparent'};
           display: flex;
           align-items: ${resolveVerticalAlignment(el.verticalAlign)};
+          overflow: hidden;
         ">
-          <div style="
+          <div class="${fittyClass}" style="
             width: 100%;
             text-align: ${el.textAlign || 'left'};
             font-family: ${getFontStackValue(el.fontFamily)};
@@ -74,13 +87,39 @@ function renderTemplate(template, data = {}) {
             letter-spacing: ${formatLetterSpacing(el.letterSpacing)};
             text-transform: ${el.textTransform || 'none'};
             word-break: ${el.wordBreak ? 'break-all' : 'normal'};
-            white-space: pre-wrap;
+            ${resizingStyle}
             ${shadowStyle}
           ">${textContent}</div>
         </div>
       `;
     })
     .join('');
+
+  const fittyScript = `
+    <script>
+      document.querySelectorAll('.fitty-text').forEach(el => {
+        const container = el.parentElement;
+        let min = 10;
+        let max = 200;
+        let optimal = 16;
+        
+        // Reset to base size
+        el.style.fontSize = '10px';
+        
+        while (min <= max) {
+          const mid = Math.floor((min + max) / 2);
+          el.style.fontSize = mid + 'px';
+          if (el.scrollHeight <= container.clientHeight && el.scrollWidth <= container.clientWidth) {
+            optimal = mid;
+            min = mid + 1;
+          } else {
+            max = mid - 1;
+          }
+        }
+        el.style.fontSize = optimal + 'px';
+      });
+    </script>
+  `;
 
   return `
     <!DOCTYPE html>
@@ -103,6 +142,7 @@ function renderTemplate(template, data = {}) {
     <body>
       <div id="canvas">
         ${elementHtml}
+        ${fittyScript}
       </div>
     </body>
     </html>

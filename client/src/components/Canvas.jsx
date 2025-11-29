@@ -266,34 +266,101 @@ function renderElementContent(el) {
     });
   };
 
-  return (
-    <div
-      className="w-full h-full flex"
-      style={{
-        alignItems: resolveAlignItems(el.verticalAlign),
-        backgroundColor: el.backgroundColor || 'transparent',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          textAlign: el.textAlign || 'left',
-          fontSize: el.fontSize || 18,
-          color: el.color || '#fff',
-          fontWeight: el.fontWeight || 400,
-          fontStyle: el.fontStyle || 'normal',
-          textDecoration: el.textDecoration || 'none',
-          lineHeight: el.lineHeight || 1.2,
-          fontFamily: getFontStack(el.fontFamily),
-          letterSpacing: typeof el.letterSpacing === 'number' ? `${el.letterSpacing}px` : undefined,
-          textTransform: el.textTransform || 'none',
-          wordBreak: el.wordBreak ? 'break-all' : 'normal',
+  const TextRenderer = () => {
+    const textRef = React.useRef(null);
+    const containerRef = React.useRef(null);
+
+    React.useLayoutEffect(() => {
+      if (el.resizing === 'fitty' && textRef.current && containerRef.current) {
+        const container = containerRef.current;
+        const textNode = textRef.current;
+
+        // Reset to base size to measure
+        textNode.style.fontSize = '10px';
+
+        let min = 10;
+        let max = 200;
+        let optimal = 16;
+
+        while (min <= max) {
+          const mid = Math.floor((min + max) / 2);
+          textNode.style.fontSize = `${mid}px`;
+
+          if (textNode.scrollHeight <= container.clientHeight && textNode.scrollWidth <= container.clientWidth) {
+            optimal = mid;
+            min = mid + 1;
+          } else {
+            max = mid - 1;
+          }
+        }
+        textNode.style.fontSize = `${optimal}px`;
+      }
+    }, [el.resizing, el.content, el.width, el.height, el.fontFamily, el.lineHeight, el.letterSpacing, el.fontWeight, el.content_preview]);
+
+    const getResizingStyles = () => {
+      if (el.resizing === 'single') {
+        return {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        };
+      }
+      if (el.resizing === 'clamp') {
+        return {
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        };
+      }
+      if (el.resizing === 'fitty') {
+        return {
           whiteSpace: 'pre-wrap',
-          textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
+          wordBreak: 'break-word',
+          // fontSize handled by effect
+        };
+      }
+      return {
+        whiteSpace: 'pre-wrap',
+      };
+    };
+
+    return (
+      <div
+        ref={containerRef}
+        className="w-full h-full flex"
+        style={{
+          alignItems: resolveAlignItems(el.verticalAlign),
+          backgroundColor: el.backgroundColor || 'transparent',
+          overflow: 'hidden', // Ensure container clips content for measurement
         }}
-      >{parseHighlightedText((el.content_preview || el.content || '').trim(), el.highlightColor)}</div>
-    </div>
-  );
+      >
+        <div
+          ref={textRef}
+          style={{
+            width: '100%',
+            textAlign: el.textAlign || 'left',
+            fontSize: el.fontSize || 18,
+            color: el.color || '#fff',
+            fontWeight: el.fontWeight || 400,
+            fontStyle: el.fontStyle || 'normal',
+            textDecoration: el.textDecoration || 'none',
+            lineHeight: el.lineHeight || 1.2,
+            fontFamily: getFontStack(el.fontFamily),
+            letterSpacing: typeof el.letterSpacing === 'number' ? `${el.letterSpacing}px` : undefined,
+            textTransform: el.textTransform || 'none',
+            wordBreak: el.wordBreak ? 'break-all' : 'normal',
+            textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
+            ...getResizingStyles(),
+          }}
+        >
+          {parseHighlightedText((el.content_preview || el.content || '').trim(), el.highlightColor)}
+        </div>
+      </div>
+    );
+  };
+
+  return <TextRenderer />;
 }
 
 function resolveJustify(value = 'left') {
