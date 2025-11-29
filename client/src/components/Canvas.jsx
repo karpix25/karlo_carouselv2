@@ -291,9 +291,7 @@ function renderElementContent(el) {
           whiteSpace: 'pre-wrap',
           textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
         }}
-      >
-        {parseHighlightedText((el.content_preview || el.content || '').trim(), el.highlightColor)}
-      </div>
+      >{parseHighlightedText((el.content_preview || el.content || '').trim(), el.highlightColor)}</div>
     </div>
   );
 }

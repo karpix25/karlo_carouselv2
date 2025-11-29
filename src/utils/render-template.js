@@ -76,9 +76,7 @@ function renderTemplate(template, data = {}) {
             word-break: ${el.wordBreak ? 'break-all' : 'normal'};
             white-space: pre-wrap;
             ${shadowStyle}
-          ">
-            ${textContent}
-          </div>
+          ">${textContent}</div>
         </div>
       `;
     })
