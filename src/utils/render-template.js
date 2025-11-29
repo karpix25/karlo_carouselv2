@@ -74,7 +74,7 @@ function renderTemplate(template, data = {}) {
             letter-spacing: ${formatLetterSpacing(el.letterSpacing)};
             text-transform: ${el.textTransform || 'none'};
             word-break: ${el.wordBreak ? 'break-all' : 'normal'};
-            white-space: pre-line;
+            white-space: pre-wrap;
             ${shadowStyle}
           ">
             ${textContent}

@@ -288,7 +288,7 @@ function renderElementContent(el) {
           letterSpacing: typeof el.letterSpacing === 'number' ? `${el.letterSpacing}px` : undefined,
           textTransform: el.textTransform || 'none',
           wordBreak: el.wordBreak ? 'break-all' : 'normal',
-          whiteSpace: 'pre-line',
+          whiteSpace: 'pre-wrap',
           textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
         }}
       >
