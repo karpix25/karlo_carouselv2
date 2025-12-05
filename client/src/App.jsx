@@ -314,6 +314,7 @@ function App() {
           <PropertiesPanel
             element={currentElement}
             onChange={(updates) => currentElement && updateElement(currentElement.id, updates)}
+            canvasSize={canvasSize}
           />
 
           <TemplateLibrary

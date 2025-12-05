@@ -41,28 +41,57 @@ export default function Canvas({
         onUpdate(interaction.id, { x: Math.round(nextX), y: Math.round(nextY) });
       } else if (interaction.type === 'resize') {
         const handle = interaction.handle;
-        let newX = interaction.originX;
-        let newY = interaction.originY;
-        let newWidth = interaction.originWidth;
-        let newHeight = interaction.originHeight;
+        const rotation = interaction.rotation || 0;
+        const rad = rotation * (Math.PI / 180);
+        const cos = Math.cos(rad);
+        const sin = Math.sin(rad);
 
-        // Calculate new dimensions based on handle
+        // Project delta onto local axes
+        const localDeltaX = deltaX * cos + deltaY * sin;
+        const localDeltaY = deltaY * cos - deltaX * sin;
+
+        let dW = 0;
+        let dH = 0;
+
         if (handle.includes('e')) {
-          newWidth = Math.max(20, interaction.originWidth + deltaX);
+          dW = localDeltaX;
+        } else if (handle.includes('w')) {
+          dW = -localDeltaX;
         }
-        if (handle.includes('w')) {
-          const proposedWidth = Math.max(20, interaction.originWidth - deltaX);
-          newX = interaction.originX + (interaction.originWidth - proposedWidth);
-          newWidth = proposedWidth;
-        }
+
         if (handle.includes('s')) {
-          newHeight = Math.max(20, interaction.originHeight + deltaY);
+          dH = localDeltaY;
+        } else if (handle.includes('n')) {
+          dH = -localDeltaY;
         }
-        if (handle.includes('n')) {
-          const proposedHeight = Math.max(20, interaction.originHeight - deltaY);
-          newY = interaction.originY + (interaction.originHeight - proposedHeight);
-          newHeight = proposedHeight;
+
+        const newWidth = Math.max(20, interaction.originWidth + dW);
+        const newHeight = Math.max(20, interaction.originHeight + dH);
+
+        const finalDW = newWidth - interaction.originWidth;
+        const finalDH = newHeight - interaction.originHeight;
+
+        let shiftX = 0;
+        let shiftY = 0;
+
+        if (handle.includes('e')) {
+          shiftX += (finalDW / 2) * cos;
+          shiftY += (finalDW / 2) * sin;
+        } else if (handle.includes('w')) {
+          shiftX -= (finalDW / 2) * cos;
+          shiftY -= (finalDW / 2) * sin;
         }
+
+        if (handle.includes('s')) {
+          shiftX += (finalDH / 2) * -sin;
+          shiftY += (finalDH / 2) * cos;
+        } else if (handle.includes('n')) {
+          shiftX -= (finalDH / 2) * -sin;
+          shiftY -= (finalDH / 2) * cos;
+        }
+
+        const newX = interaction.originX + shiftX - finalDW / 2;
+        const newY = interaction.originY + shiftY - finalDH / 2;
 
         onUpdate(interaction.id, {
           x: Math.round(newX),
@@ -102,10 +131,10 @@ export default function Canvas({
         pointerId: event.pointerId,
         startClientX: event.clientX,
         startClientY: event.clientY,
-        originX: element.x,
-        originY: element.y,
-        width: element.width,
-        height: element.height,
+        originX: element.x || 0,
+        originY: element.y || 0,
+        width: element.width || 0,
+        height: element.height || 0,
         captureTarget: event.currentTarget,
       };
       event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -126,10 +155,11 @@ export default function Canvas({
         pointerId: event.pointerId,
         startClientX: event.clientX,
         startClientY: event.clientY,
-        originX: element.x,
-        originY: element.y,
-        originWidth: element.width,
-        originHeight: element.height,
+        originX: element.x || 0,
+        originY: element.y || 0,
+        originWidth: element.width || 0,
+        originHeight: element.height || 0,
+        rotation: element.rotation || 0,
         captureTarget: event.currentTarget,
       };
       event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -159,11 +189,12 @@ export default function Canvas({
                 : 'ring-1 ring-transparent hover:ring-purple-200'
                 }`}
               style={{
-                width: el.width,
-                height: el.height,
-                transformOrigin: 'top left',
-                left: el.x,
-                top: el.y,
+                width: el.width || 0,
+                height: el.height || 0,
+                transformOrigin: 'center',
+                left: el.x || 0,
+                top: el.y || 0,
+                transform: `rotate(${el.rotation || 0}deg)`,
                 opacity: el.opacity ?? 1,
                 zIndex: index + 1,
               }}

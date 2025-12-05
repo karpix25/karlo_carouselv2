@@ -13,10 +13,11 @@ import {
   Type,
   Check,
   ChevronDown,
+  RotateCw,
 } from 'lucide-react';
 import FONT_OPTIONS, { DEFAULT_FONT, getFontStack } from '../constants/fonts';
 
-export default function PropertiesPanel({ element, onChange }) {
+export default function PropertiesPanel({ element, onChange, canvasSize }) {
   if (!element) {
     return (
       <div className="border rounded-2xl p-6 text-center text-sm text-gray-500">
@@ -29,9 +30,15 @@ export default function PropertiesPanel({ element, onChange }) {
   const isImage = element.type === 'image';
   const isShape = element.type === 'shape';
 
-  const handleNumberChange = (field) => (value) => {
-    if (!Number.isNaN(value)) {
-      onChange({ [field]: value });
+  const handleInputChange = (field) => (e) => {
+    const value = e.target.value;
+    if (value === '') {
+      onChange({ [field]: '' });
+      return;
+    }
+    const num = parseFloat(value);
+    if (!Number.isNaN(num)) {
+      onChange({ [field]: num });
     }
   };
 
@@ -45,8 +52,21 @@ export default function PropertiesPanel({ element, onChange }) {
       onChange({ textDecoration: current.includes('underline') ? current.replace('underline', '').trim() || 'none' : `${current} underline`.trim() });
     } else if (style === 'strikethrough') {
       const current = element.textDecoration || 'none';
-      onChange({ textDecoration: current.includes('line-through') ? current.replace('line-through', '').trim() || 'none' : `${current} line-through`.trim() });
     }
+  };
+
+  const align = (direction) => {
+    if (!element || !canvasSize) return;
+    const updates = {};
+    switch (direction) {
+      case 'left': updates.x = 0; break;
+      case 'center': updates.x = Math.round((canvasSize.width - element.width) / 2); break;
+      case 'right': updates.x = canvasSize.width - element.width; break;
+      case 'top': updates.y = 0; break;
+      case 'middle': updates.y = Math.round((canvasSize.height - element.height) / 2); break;
+      case 'bottom': updates.y = canvasSize.height - element.height; break;
+    }
+    onChange(updates);
   };
 
   const currentFontFamily = element.fontFamily || DEFAULT_FONT;
@@ -164,8 +184,8 @@ export default function PropertiesPanel({ element, onChange }) {
                 <div className="relative">
                   <input
                     type="number"
-                    value={element.fontSize || 16}
-                    onChange={(e) => handleNumberChange('fontSize')(parseInt(e.target.value, 10))}
+                    value={element.fontSize ?? 16}
+                    onChange={handleInputChange('fontSize')}
                     className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
                   />
                   <span className="absolute right-3 top-2 text-gray-400 text-xs">px</span>
@@ -177,7 +197,7 @@ export default function PropertiesPanel({ element, onChange }) {
                   <input
                     type="number"
                     value={element.letterSpacing ?? 0}
-                    onChange={(e) => handleNumberChange('letterSpacing')(parseFloat(e.target.value))}
+                    onChange={handleInputChange('letterSpacing')}
                     className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
                   />
                   <span className="absolute right-3 top-2 text-gray-400 text-xs">px</span>
@@ -284,7 +304,7 @@ export default function PropertiesPanel({ element, onChange }) {
                 type="number"
                 step="0.1"
                 value={element.lineHeight ?? 1.2}
-                onChange={(e) => handleNumberChange('lineHeight')(parseFloat(e.target.value))}
+                onChange={handleInputChange('lineHeight')}
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               />
             </div>
@@ -393,51 +413,80 @@ export default function PropertiesPanel({ element, onChange }) {
         isCollapsed={collapsedSections.layout}
         onToggle={() => toggleSection('layout')}
       >
+        <div className="space-y-2 mb-3">
+          <label className="text-xs text-gray-500">Quick Align</label>
+          <div className="flex gap-1">
+            <StyleButton onClick={() => align('left')} icon={<AlignLeft size={16} />} />
+            <StyleButton onClick={() => align('center')} icon={<AlignCenter size={16} />} />
+            <StyleButton onClick={() => align('right')} icon={<AlignRight size={16} />} />
+            <div className="w-2" />
+            <StyleButton onClick={() => align('top')} icon={<ArrowUpToLine size={16} />} />
+            <StyleButton onClick={() => align('middle')} icon={<MoveVertical size={16} />} />
+            <StyleButton onClick={() => align('bottom')} icon={<ArrowDownToLine size={16} />} />
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="X">
             <input
               type="number"
-              value={element.x}
-              onChange={(e) => handleNumberChange('x')(parseInt(e.target.value, 10))}
+              value={element.x ?? 0}
+              onChange={handleInputChange('x')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
           <Field label="Y">
             <input
               type="number"
-              value={element.y}
-              onChange={(e) => handleNumberChange('y')(parseInt(e.target.value, 10))}
+              value={element.y ?? 0}
+              onChange={handleInputChange('y')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
           <Field label="Width">
             <input
               type="number"
-              value={element.width}
-              onChange={(e) => handleNumberChange('width')(parseInt(e.target.value, 10))}
+              value={element.width ?? 0}
+              onChange={handleInputChange('width')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
           <Field label="Height">
             <input
               type="number"
-              value={element.height}
-              onChange={(e) => handleNumberChange('height')(parseInt(e.target.value, 10))}
+              value={element.height ?? 0}
+              onChange={handleInputChange('height')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
         </div>
-        <Field label="Opacity">
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.05}
-            value={element.opacity ?? 1}
-            onChange={(e) => onChange({ opacity: parseFloat(e.target.value) })}
-            className="w-full accent-purple-600"
-          />
-        </Field>
+
+        <div className="grid grid-cols-2 gap-3 mt-3">
+          <Field label="Rotation">
+            <div className="relative">
+              <input
+                type="number"
+                value={element.rotation ?? 0}
+                onChange={handleInputChange('rotation')}
+                className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
+              />
+              <div className="absolute right-2 top-2 text-gray-400">
+                <RotateCw size={14} />
+              </div>
+            </div>
+          </Field>
+          <Field label="Opacity">
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={element.opacity ?? 1}
+              onChange={(e) => onChange({ opacity: parseFloat(e.target.value) })}
+              className="w-full accent-purple-600"
+            />
+          </Field>
+        </div>
       </CollapsibleSection>
 
       {/* Image Specific */}
@@ -469,8 +518,8 @@ export default function PropertiesPanel({ element, onChange }) {
           <Field label="Radius">
             <input
               type="number"
-              value={element.borderRadius || 0}
-              onChange={(e) => handleNumberChange('borderRadius')(parseInt(e.target.value, 10))}
+              value={element.borderRadius ?? 0}
+              onChange={handleInputChange('borderRadius')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
@@ -525,16 +574,22 @@ export default function PropertiesPanel({ element, onChange }) {
                 <Field label="X Offset">
                   <input
                     type="number"
-                    value={element.shadow.x || 0}
-                    onChange={(e) => onChange({ shadow: { ...element.shadow, x: parseInt(e.target.value) || 0 } })}
+                    value={element.shadow.x ?? 0}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange({ shadow: { ...element.shadow, x: val === '' ? '' : parseInt(val) || 0 } });
+                    }}
                     className="w-full border rounded-lg px-3 py-2 text-sm"
                   />
                 </Field>
                 <Field label="Y Offset">
                   <input
                     type="number"
-                    value={element.shadow.y || 0}
-                    onChange={(e) => onChange({ shadow: { ...element.shadow, y: parseInt(e.target.value) || 0 } })}
+                    value={element.shadow.y ?? 0}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange({ shadow: { ...element.shadow, y: val === '' ? '' : parseInt(val) || 0 } });
+                    }}
                     className="w-full border rounded-lg px-3 py-2 text-sm"
                   />
                 </Field>
