@@ -10,6 +10,7 @@ import ZoomControls from './components/ZoomControls';
 import TemplateLibrary from './components/TemplateLibrary';
 import useFontLoader from './hooks/useFontLoader';
 import { DEFAULT_FONT } from './constants/fonts';
+import { parseHtml } from './utils/htmlImporter';
 
 const SIZE_PRESETS = [
   { label: 'Custom Size', value: 'custom' },
@@ -326,6 +327,58 @@ function App() {
     setIsPanning(false);
   }, []);
 
+  const handleImportHtml = (content) => {
+    try {
+      let importedData;
+      // Simple check for JSON vs HTML
+      if (content.trim().startsWith('{')) {
+        const json = JSON.parse(content);
+        // Basic validation
+        if (!json.elements || !json.width) {
+          throw new Error('Invalid JSON template');
+        }
+        importedData = {
+          width: json.width,
+          height: json.height,
+          elements: json.elements,
+          name: json.name || 'Imported Template'
+        };
+      } else {
+        importedData = parseHtml(content);
+      }
+
+      const { width, height, elements: importedElements, name } = importedData;
+      setCanvasSize({ width, height });
+      setElements(importedElements);
+      setTemplateName(name || 'Imported Template');
+      setSelectedId(null);
+      setCurrentTemplateId(null);
+      setSizePreset('custom');
+      alert('Template imported successfully!');
+    } catch (err) {
+      console.error('Import failed', err);
+      alert('Failed to parse template (HTML or JSON)');
+    }
+  };
+
+  const handleExportTemplate = () => {
+    const templateData = {
+      name: templateName,
+      width: canvasSize.width,
+      height: canvasSize.height,
+      elements,
+      exportSettings,
+      version: '1.0'
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(templateData, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `${templateName.replace(/\s+/g, '_')}.json`);
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <DesignerTopBar
@@ -382,6 +435,7 @@ function App() {
             onDuplicate={duplicateElement}
             onDelete={removeElement}
             onMoveLayer={moveLayer}
+            onUpdate={updateElement}
           />
 
           <PropertiesPanel
@@ -395,6 +449,8 @@ function App() {
             onLoad={loadTemplate}
             currentTemplateId={currentTemplateId}
             onCreateNew={handleCreateNewTemplate}
+            onImport={handleImportHtml}
+            onExport={handleExportTemplate}
           />
 
           <ExportSettingsPanel

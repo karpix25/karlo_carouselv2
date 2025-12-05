@@ -1,6 +1,9 @@
 import React from 'react';
 
-export default function TemplateLibrary({ templates, onLoad, currentTemplateId, onCreateNew }) {
+export default function TemplateLibrary({ templates, onLoad, currentTemplateId, onCreateNew, onImport, onExport }) {
+  const [isImporting, setIsImporting] = React.useState(false);
+  const [importCode, setImportCode] = React.useState('');
+
   return (
     <section>
       <header className="flex items-center justify-between mb-3">
@@ -13,9 +16,53 @@ export default function TemplateLibrary({ templates, onLoad, currentTemplateId, 
           onClick={onCreateNew}
           className="text-xs font-semibold text-purple-700 border border-purple-200 rounded-full px-3 py-1 hover:bg-purple-50"
         >
-          + New template
+          + New
         </button>
       </header>
+
+      {/* Import/Export Section */}
+      <div className="mb-4 space-y-2">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsImporting(!isImporting)}
+            className="text-xs text-purple-600 hover:underline"
+          >
+            {isImporting ? 'Cancel Import' : 'Import Template'}
+          </button>
+          <span className="text-gray-300">|</span>
+          <button
+            onClick={onExport}
+            className="text-xs text-purple-600 hover:underline"
+          >
+            Export JSON
+          </button>
+        </div>
+
+        {isImporting && (
+          <div className="space-y-2 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+            <textarea
+              value={importCode}
+              onChange={(e) => setImportCode(e.target.value)}
+              placeholder="Paste HTML or JSON code here..."
+              className="w-full text-xs font-mono border rounded-lg p-2 h-24 focus:outline-none focus:ring-1 focus:ring-500"
+            />
+            <button
+              onClick={() => {
+                if (importCode.trim()) {
+                  onImport(importCode);
+                  setImportCode('');
+                  setIsImporting(false);
+                }
+              }}
+              disabled={!importCode.trim()}
+              className="w-full bg-purple-600 text-white text-xs font-semibold py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+            >
+              Import
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="space-y-2 max-h-64 overflow-auto pr-1">
         {templates.map((template) => {
           const isActive = template.id === currentTemplateId;
@@ -24,9 +71,8 @@ export default function TemplateLibrary({ templates, onLoad, currentTemplateId, 
               key={template.id}
               type="button"
               onClick={() => onLoad(template.id)}
-              className={`w-full border rounded-xl px-3 py-2 text-left text-sm ${
-                isActive ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-purple-200'
-              }`}
+              className={`w-full border rounded-xl px-3 py-2 text-left text-sm ${isActive ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-purple-200'
+                }`}
             >
               <p className="font-semibold text-gray-800">{template.name || 'Untitled template'}</p>
               <p className="text-xs text-gray-500 flex items-center gap-2">

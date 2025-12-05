@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowUp, ArrowDown, Copy, Trash2 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Copy, Trash2, Lock, Unlock } from 'lucide-react';
 
 export default function LayersPanel({
   elements,
@@ -8,13 +7,16 @@ export default function LayersPanel({
   onDuplicate,
   onDelete,
   onMoveLayer,
+  onUpdate,
 }) {
   const ordered = elements
+    // ... logic remains same
     .map((el, index) => ({ ...el, originalIndex: index }))
     .reverse();
 
   return (
     <section>
+      {/* header ... */}
       <header className="flex items-center justify-between mb-3">
         <div>
           <p className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Layers</p>
@@ -31,21 +33,26 @@ export default function LayersPanel({
           return (
             <div
               key={layer.id}
-              className={`flex items-center justify-between rounded-xl border px-3 py-2 text-sm ${
-                isSelected ? 'border-purple-400 bg-purple-50' : 'border-gray-200'
-              }`}
+              className={`flex items-center justify-between rounded-xl border px-3 py-2 text-sm ${isSelected ? 'border-purple-400 bg-purple-50' : 'border-gray-200'
+                }`}
             >
               <button
                 type="button"
                 className="flex-1 text-left"
                 onClick={() => onSelect(layer.id)}
               >
-                <p className="font-semibold text-gray-800">{layer.name || layer.type.toUpperCase()}</p>
+                <div className="flex items-center gap-2">
+                  {layer.locked && <Lock size={12} className="text-gray-400" />}
+                  <p className="font-semibold text-gray-800">{layer.name || layer.type.toUpperCase()}</p>
+                </div>
                 <p className="text-xs text-gray-500">
                   {layer.variableName ? `{{${layer.variableName}}}` : `${layer.width}×${layer.height}`}
                 </p>
               </button>
               <div className="flex items-center gap-1">
+                <LayerIconButton onClick={() => onUpdate(layer.id, { locked: !layer.locked })}>
+                  {layer.locked ? <Lock size={14} className="text-red-500" /> : <Unlock size={14} />}
+                </LayerIconButton>
                 <LayerIconButton disabled={isTop} onClick={() => onMoveLayer(layer.id, 'up')}>
                   <ArrowUp size={14} />
                 </LayerIconButton>
@@ -78,9 +85,8 @@ function LayerIconButton({ children, disabled, onClick }) {
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`w-8 h-8 rounded-full border flex items-center justify-center ${
-        disabled ? 'text-gray-300 border-gray-200' : 'text-gray-600 border-gray-200 hover:border-purple-400'
-      }`}
+      className={`w-8 h-8 rounded-full border flex items-center justify-center ${disabled ? 'text-gray-300 border-gray-200' : 'text-gray-600 border-gray-200 hover:border-purple-400'
+        }`}
     >
       {children}
     </button>

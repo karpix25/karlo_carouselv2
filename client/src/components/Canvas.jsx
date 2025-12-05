@@ -122,6 +122,8 @@ export default function Canvas({
   const startDrag = useCallback(
     (event, element) => {
       if (event.button !== 0) return;
+      if (element.locked) return; // Prevent drag if locked
+
       event.stopPropagation();
       event.preventDefault();
       onSelect(element.id);
@@ -145,6 +147,8 @@ export default function Canvas({
   const startResize = useCallback(
     (event, element, handle) => {
       if (event.button !== 0) return;
+      if (element.locked) return; // Prevent resize if locked
+
       event.stopPropagation();
       event.preventDefault();
       onSelect(element.id);
