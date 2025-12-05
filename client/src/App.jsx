@@ -324,7 +324,12 @@ function App() {
             onCreateNew={handleCreateNewTemplate}
           />
 
-          <ExportSettingsPanel settings={exportSettings} onChange={handleExportSettingChange} />
+          <ExportSettingsPanel
+            settings={exportSettings}
+            onChange={handleExportSettingChange}
+            elements={elements}
+            templateId={currentTemplateId}
+          />
         </div>
       </div>
     </div>

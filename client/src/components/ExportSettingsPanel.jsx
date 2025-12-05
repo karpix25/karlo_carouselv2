@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Copy, Check } from 'lucide-react';
 
 const imageFormats = [
   { label: 'Automatic', value: 'automatic' },
@@ -17,11 +17,36 @@ const pdfQuality = [
   { label: 'Standard', value: 'standard' },
 ];
 
-export default function ExportSettingsPanel({ settings, onChange }) {
+export default function ExportSettingsPanel({ settings, onChange, elements = [], templateId }) {
   const [collapsedSections, setCollapsedSections] = React.useState({});
+  const [copied, setCopied] = React.useState(false);
 
   const toggleSection = (section) => {
     setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const getApiPreview = () => {
+    const variables = elements
+      .filter(el => el.variableName)
+      .reduce((acc, el) => {
+        acc[el.variableName] = el.type === 'image' ? 'https://example.com/image.png' : 'Sample Text';
+        return acc;
+      }, {});
+
+    const url = `${window.location.origin}/templates/${templateId || '{id}'}/render`;
+
+    const curl = `curl -X POST "${url}" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(variables, null, 2)}' \\
+  --output result.png`;
+
+    return curl;
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(getApiPreview());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -110,6 +135,33 @@ export default function ExportSettingsPanel({ settings, onChange }) {
             ))}
           </select>
         </SettingsField>
+      </SettingsCard>
+
+      <SettingsCard
+        title="API Integration"
+        isCollapsed={collapsedSections.api}
+        onToggle={() => toggleSection('api')}
+      >
+        <div className="space-y-3">
+          <p className="text-xs text-gray-500">
+            Use this cURL command to generate an image from this template via API.
+          </p>
+          <div className="relative">
+            <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap">
+              {getApiPreview()}
+            </pre>
+            <button
+              onClick={handleCopy}
+              className="absolute top-2 right-2 p-1.5 bg-white/10 hover:bg-white/20 rounded text-white transition-colors"
+              title="Copy to clipboard"
+            >
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+            </button>
+          </div>
+          <p className="text-xs text-gray-400">
+            💡 Make sure to define "Variable Name" for elements you want to change dynamically.
+          </p>
+        </div>
       </SettingsCard>
     </section>
   );
