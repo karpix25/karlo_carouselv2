@@ -4,6 +4,7 @@ services:
     platform: linux/amd64
     volumes:
       - ./src:/service/src
+      - ./data:/service/data
     build:
       context: .
       dockerfile: Dockerfile
