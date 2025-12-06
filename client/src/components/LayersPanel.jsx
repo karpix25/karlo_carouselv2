@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowUp, ArrowDown, Copy, Trash2, Lock, Unlock } from 'lucide-react';
 
 export default function LayersPanel({
