@@ -202,9 +202,6 @@ export default function Canvas({
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
     };
   }, [handlePointerMove, handlePointerUp]);
 
