@@ -595,13 +595,6 @@ function getDropShadowFilter(stroke, shadow, isContour) {
   return filters.length > 0 ? filters.join(' ') : undefined;
 }
 
-function hexToRgba(hex, alpha = 1) {
-  if (!hex) return 'rgba(0,0,0,1)';
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 function resolveJustify(value = 'left') {
   if (value === 'center') return 'center';
