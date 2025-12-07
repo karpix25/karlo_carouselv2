@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Tooltip.css';
 
 export default function Tooltip({ text, children, position = 'top' }) {
     const [visible, setVisible] = useState(false);
-    let timeout;
+    const timeoutRef = useRef(null);
 
     const handleMouseEnter = () => {
-        timeout = setTimeout(() => setVisible(true), 500);
+        timeoutRef.current = setTimeout(() => setVisible(true), 500);
     };
 
     const handleMouseLeave = () => {
-        clearTimeout(timeout);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
         setVisible(false);
     };
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div
