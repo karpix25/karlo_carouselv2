@@ -92,13 +92,13 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
         <>
           {/* TEXT STYLE SECTION */}
           <CollapsibleSection
-            title="TEXT STYLE"
+            title={t('properties.textStyle')}
             isCollapsed={collapsedSections.textStyle}
             onToggle={() => toggleSection('textStyle')}
           >
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Font</label>
+              <label className="text-xs text-gray-500">{t('properties.font')}</label>
               <select
                 value={currentFontFamily}
                 onChange={(e) => onChange({ fontFamily: e.target.value })}
@@ -142,13 +142,13 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                   onClick={() => setShowCustomFont(true)}
                   className="text-purple-600 text-sm font-medium hover:underline"
                 >
-                  Upload Custom Font
+                  {t('properties.uploadCustomFont')}
                 </button>
               )}
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Content Preview (for testing)</label>
+              <label className="text-xs text-gray-500">{t('properties.contentPreview')}</label>
               <textarea
                 value={element.content_preview || ''}
                 onChange={(e) => onChange({ content_preview: e.target.value })}
@@ -156,12 +156,12 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 className="w-full border rounded-lg px-3 py-2 text-sm h-20 resize-none"
               />
               <p className="text-xs text-gray-400">
-                💡 This text is only for preview. Use "Variable name" to inject real data.
+                {t('properties.contentPreviewHint')}
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Color</label>
+              <label className="text-xs text-gray-500">{t('properties.color')}</label>
               <div className="flex gap-2">
                 <div
                   className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0"
@@ -188,7 +188,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs text-gray-500">Size</label>
+                <label className="text-xs text-gray-500">{t('properties.size')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -200,7 +200,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-gray-500">Spacing</label>
+                <label className="text-xs text-gray-500">{t('properties.spacing')}</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -214,21 +214,21 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Resizing</label>
+              <label className="text-xs text-gray-500">{t('properties.resizing')}</label>
               <select
                 value={element.resizing || 'plain'}
                 onChange={(e) => onChange({ resizing: e.target.value })}
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               >
-                <option value="plain">Plain text</option>
-                <option value="fitty">Fitty (Auto-scale)</option>
-                <option value="clamp">Clamp (3 lines)</option>
-                <option value="single">Single Line</option>
+                <option value="plain">{t('properties.plain')}</option>
+                <option value="fitty">{t('properties.fitty')}</option>
+                <option value="clamp">{t('properties.clamp')}</option>
+                <option value="single">{t('properties.singleLine')}</option>
               </select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Style</label>
+              <label className="text-xs text-gray-500">{t('properties.style')}</label>
               <div className="flex gap-2">
                 <StyleButton
                   active={element.fontStyle === 'italic'}
@@ -254,7 +254,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Transform</label>
+              <label className="text-xs text-gray-500">{t('properties.transform')}</label>
               <select
                 value={element.textTransform || 'none'}
                 onChange={(e) => onChange({ textTransform: e.target.value })}
@@ -268,7 +268,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Highlighting (for **text** syntax)</label>
+              <label className="text-xs text-gray-500">{t('properties.highlighting')}</label>
               <div className="flex gap-2">
                 <div
                   className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0"
@@ -325,13 +325,13 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
 
           {/* TEXTBOX SECTION */}
           <CollapsibleSection
-            title="TEXTBOX"
+            title={t('properties.textbox')}
             isCollapsed={collapsedSections.textbox}
             onToggle={() => toggleSection('textbox')}
           >
 
             <div className="space-y-1">
-              <label className="text-xs text-gray-500">Line Height</label>
+              <label className="text-xs text-gray-500">{t('properties.lineHeight')}</label>
               <input
                 type="number"
                 step="0.1"
@@ -342,7 +342,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Background</label>
+              <label className="text-xs text-gray-500">{t('properties.background')}</label>
               <div className="flex gap-2 items-center">
                 <div
                   className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0 relative overflow-hidden"
@@ -381,7 +381,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Alignment</label>
+              <label className="text-xs text-gray-500">{t('properties.alignment')}</label>
               <div className="flex gap-2">
                 <StyleButton
                   active={element.textAlign === 'left' || !element.textAlign}
@@ -402,7 +402,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-500">Anchor</label>
+              <label className="text-xs text-gray-500">{t('properties.anchor')}</label>
               <div className="flex gap-2">
                 <StyleButton
                   active={element.verticalAlign === 'top' || !element.verticalAlign}
@@ -423,7 +423,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-gray-500">Word-Break</label>
+              <label className="text-xs text-gray-500">{t('properties.wordBreak')}</label>
               <button
                 onClick={() => onChange({ wordBreak: !element.wordBreak })}
                 className={`w-12 h-6 rounded-full transition-colors relative ${element.wordBreak ? 'bg-purple-600' : 'bg-gray-200'
@@ -441,12 +441,12 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
 
       {/* Common Properties for all types */}
       <CollapsibleSection
-        title="LAYOUT"
+        title={t('properties.layout')}
         isCollapsed={collapsedSections.layout}
         onToggle={() => toggleSection('layout')}
       >
         <div className="space-y-2 mb-3">
-          <label className="text-xs text-gray-500">Quick Align</label>
+          <label className="text-xs text-gray-500">{t('properties.quickAlign')}</label>
           <div className="flex gap-1">
             <StyleButton onClick={() => align('left')} icon={<AlignLeft size={16} />} />
             <StyleButton onClick={() => align('center')} icon={<AlignCenter size={16} />} />
@@ -528,7 +528,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
           isCollapsed={collapsedSections.image}
           onToggle={() => toggleSection('image')}
         >
-          <Field label="URL">
+          <Field label={t('properties.url')}>
             <input
               type="text"
               value={element.content || ''}
@@ -536,18 +536,18 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Fit">
+          <Field label={t('properties.fit')}>
             <select
               value={element.fit || 'cover'}
               onChange={(e) => onChange({ fit: e.target.value })}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             >
-              <option value="cover">Cover</option>
-              <option value="contain">Contain</option>
-              <option value="fill">Fill</option>
+              <option value="cover">{t('properties.cover')}</option>
+              <option value="contain">{t('properties.contain')}</option>
+              <option value="fill">{t('properties.fill')}</option>
             </select>
           </Field>
-          <Field label="Radius">
+          <Field label={t('properties.radius')}>
             <input
               type="number"
               value={element.borderRadius ?? 0}
@@ -560,13 +560,13 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
 
       {/* Shadow Section */}
       <CollapsibleSection
-        title="SHADOW"
+        title={t('properties.shadow')}
         isCollapsed={collapsedSections.shadow}
         onToggle={() => toggleSection('shadow')}
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs text-gray-500">Enable Shadow</label>
+            <label className="text-xs text-gray-500">{t('properties.enableShadow')}</label>
             <button
               onClick={() => onChange({ shadow: element.shadow ? null : { color: '#000000', blur: 10, x: 0, y: 4 } })}
               className={`w-12 h-6 rounded-full transition-colors relative ${element.shadow ? 'bg-purple-600' : 'bg-gray-200'}`}
@@ -651,7 +651,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs text-gray-500">Enable Stroke</label>
+            <label className="text-xs text-gray-500">{t('properties.enableStroke')}</label>
             <button
               onClick={() => onChange({ stroke: element.stroke ? null : { color: '#000000', width: 2 } })}
               className={`w-12 h-6 rounded-full transition-colors relative ${element.stroke ? 'bg-purple-600' : 'bg-gray-200'}`}
@@ -702,7 +702,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               {/* Contour Mode for Images */}
               {isImage && (
                 <div className="flex items-center justify-between pt-2 border-t">
-                  <label className="text-xs text-gray-500">Contour Mode</label>
+                  <label className="text-xs text-gray-500">{t('properties.contourMode')}</label>
                   <input
                     type="checkbox"
                     checked={element.contour || false}
