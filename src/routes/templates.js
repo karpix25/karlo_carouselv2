@@ -115,4 +115,41 @@ router.post("/:id/render", async (ctx) => {
   }
 });
 
+// Direct render from JSON (no template saving)
+router.post("/render", async (ctx) => {
+  const { template, data } = ctx.request.body;
+
+  if (!template) {
+    ctx.status = 400;
+    ctx.body = { error: "Template JSON is required in request body" };
+    return;
+  }
+
+  if (!template.width || !template.height) {
+    ctx.status = 400;
+    ctx.body = { error: "Template must have width and height properties" };
+    return;
+  }
+
+  const html = renderTemplate(template, data || {});
+
+  const browser = await getBrowser();
+  const page = await browser.newPage();
+
+  try {
+    await page.setContent(html, { waitUntil: "load" });
+
+    const buffer = await page.screenshot({
+      fullPage: true,
+      type: "png",
+      omitBackground: true,
+    });
+
+    ctx.set("Content-Type", "image/png");
+    ctx.body = buffer;
+  } finally {
+    await page.close();
+  }
+});
+
 module.exports = router;
