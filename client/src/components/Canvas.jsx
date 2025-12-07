@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, memo, forwardRef } from 'react';
 import { getFontStack } from '../constants/fonts';
 
 const gridPattern =
@@ -15,8 +15,8 @@ export default function Canvas({
   showGrid,
 }) {
   const interactionRef = useRef(null);
-  const lastThrottleTime = useRef(0);
-  const pendingUpdateRef = useRef(null);
+  // Map of element IDs to their DOM nodes
+  const layerRefs = useRef(new Map());
 
   const backgroundStyle = showGrid
     ? {
@@ -26,6 +26,15 @@ export default function Canvas({
     }
     : { backgroundColor: '#1f1f1f' };
 
+  // Helper to set refs
+  const setLayerRef = useCallback((id, node) => {
+    if (node) {
+      layerRefs.current.set(id, node);
+    } else {
+      layerRefs.current.delete(id);
+    }
+  }, []);
+
   const handlePointerMove = useCallback(
     (event) => {
       const interaction = interactionRef.current;
@@ -34,130 +43,164 @@ export default function Canvas({
         return;
       }
 
+      event.preventDefault(); // crucial for smoother drag
+
       const deltaX = (event.clientX - interaction.startClientX) / zoom;
       const deltaY = (event.clientY - interaction.startClientY) / zoom;
 
-      let updatePayload = null;
+      // Get the DOM node for the interacting element
+      const node = layerRefs.current.get(interaction.id);
+      if (!node) return;
 
       if (interaction.type === 'drag') {
+        // Direct DOM manipulation for Drag
         const nextX = clamp(interaction.originX + deltaX, 0, Math.max(0, width - interaction.width));
         const nextY = clamp(interaction.originY + deltaY, 0, Math.max(0, height - interaction.height));
 
-        updatePayload = { x: Math.round(nextX), y: Math.round(nextY) };
+        // Save current calculated values to interaction object for 'pointerup' commit
+        interaction.currentX = Math.round(nextX);
+        interaction.currentY = Math.round(nextY);
+
+        // Apply via transform to avoid layout thrashing, but since we rely on absolute positioning 'left/top', 
+        // mixing transform might be tricky if we want to update top/left.
+        // However, for best performance, we should ideally use translate.
+        // But our data model uses top/left.
+        // Strategy: keep top/left static during drag (at origin), and use translate to move.
+        // Wait, 'top/left' are already set on the element via styles from props.
+        // If we change top/left directly, it triggers layout. 
+        // If we use transform: translate, it triggers composite (fast).
+        // 
+        // Existing style has: transform: rotate(${rotation}deg)
+        // We must preserve rotation.
+
+        const rotation = interaction.rotation || 0;
+        // Calculate the visual offset from the ORIGINAL position
+        const offsetX = interaction.currentX - interaction.originX;
+        const offsetY = interaction.currentY - interaction.originY;
+
+        node.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+
+        // We do NOT touch top/left during drag.
 
       } else if (interaction.type === 'resize') {
+        // Resize is trickier because we change width/height, which IS layout.
+        // But it's only 1 element.
+
         const handle = interaction.handle;
         const rotation = interaction.rotation || 0;
         const rad = rotation * (Math.PI / 180);
         const cos = Math.cos(rad);
         const sin = Math.sin(rad);
 
-        // Project delta onto local axes
         const localDeltaX = deltaX * cos + deltaY * sin;
         const localDeltaY = deltaY * cos - deltaX * sin;
 
-        let dW = 0;
-        let dH = 0;
+        let dW = 0; let dH = 0;
 
-        if (handle.includes('e')) {
-          dW = localDeltaX;
-        } else if (handle.includes('w')) {
-          dW = -localDeltaX;
-        }
+        if (handle.includes('e')) dW = localDeltaX;
+        else if (handle.includes('w')) dW = -localDeltaX;
 
-        if (handle.includes('s')) {
-          dH = localDeltaY;
-        } else if (handle.includes('n')) {
-          dH = -localDeltaY;
-        }
+        if (handle.includes('s')) dH = localDeltaY;
+        else if (handle.includes('n')) dH = -localDeltaY;
 
         let newWidth = Math.max(20, interaction.originWidth + dW);
         let newHeight = Math.max(20, interaction.originHeight + dH);
 
         if (interaction.constrainProportions) {
           const aspect = interaction.aspect || 1;
-
           if (handle.length === 2 || handle === 'w' || handle === 'e') {
-            // Corner or Side (Width drives Height)
             newHeight = Math.round(newWidth / aspect);
           } else {
-            // Top/Bottom (Height drives Width)
             newWidth = Math.round(newHeight * aspect);
           }
         }
 
-        // Final constrained new dimensions
         newWidth = Math.round(newWidth);
         newHeight = Math.round(newHeight);
+
+        // Store for commit
+        interaction.currentWidth = newWidth;
+        interaction.currentHeight = newHeight;
 
         const finalDW = newWidth - interaction.originWidth;
         const finalDH = newHeight - interaction.originHeight;
 
-        let shiftX = 0;
-        let shiftY = 0;
+        let shiftX = 0; let shiftY = 0;
 
-        if (handle.includes('e')) {
-          shiftX += (finalDW / 2) * cos;
-          shiftY += (finalDW / 2) * sin;
-        } else if (handle.includes('w')) {
-          shiftX -= (finalDW / 2) * cos;
-          shiftY -= (finalDW / 2) * sin;
-        }
+        if (handle.includes('e')) { shiftX += (finalDW / 2) * cos; shiftY += (finalDW / 2) * sin; }
+        else if (handle.includes('w')) { shiftX -= (finalDW / 2) * cos; shiftY -= (finalDW / 2) * sin; }
 
-        if (handle.includes('s')) {
-          shiftX += (finalDH / 2) * -sin;
-          shiftY += (finalDH / 2) * cos;
-        } else if (handle.includes('n')) {
-          shiftX -= (finalDH / 2) * -sin;
-          shiftY -= (finalDH / 2) * cos;
-        }
+        if (handle.includes('s')) { shiftX += (finalDH / 2) * -sin; shiftY += (finalDH / 2) * cos; }
+        else if (handle.includes('n')) { shiftX -= (finalDH / 2) * -sin; shiftY -= (finalDH / 2) * cos; }
 
         const newX = interaction.originX + shiftX - finalDW / 2;
         const newY = interaction.originY + shiftY - finalDH / 2;
 
-        updatePayload = {
-          x: Math.round(newX),
-          y: Math.round(newY),
-          width: newWidth,
-          height: newHeight,
-        };
-      }
+        interaction.currentX = Math.round(newX);
+        interaction.currentY = Math.round(newY);
 
-      if (updatePayload) {
-        pendingUpdateRef.current = updatePayload;
-        const now = Date.now();
-        // Throttle to ~120fps (8ms)
-        if (now - lastThrottleTime.current >= 8) {
-          onUpdate(interaction.id, updatePayload);
-          lastThrottleTime.current = now;
-          pendingUpdateRef.current = null;
-        }
+        // Apply styles directly
+        node.style.width = `${newWidth}px`;
+        node.style.height = `${newHeight}px`;
+        // For position, we again use translate to avoid modifying top/left if possible?
+        // But resize relies on re-centering logic often. 
+        // Actually, if we update width/height, the element grows from center (transformOrigin center).
+        // But our logic calculates top-left coordinates (newX, newY).
+        // The element is positioned at 'left/top' (originX, originY).
+        // We need to move it to (newX, newY).
+        // Distance to move:
+        const offsetX = interaction.currentX - interaction.originX;
+        const offsetY = interaction.currentY - interaction.originY;
+
+        node.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
       }
     },
-    [onUpdate, width, height, zoom]
+    [width, height, zoom]
   );
 
   const handlePointerUp = useCallback(
     (event) => {
       const interaction = interactionRef.current;
-      if (!interaction) {
-        return;
-      }
-      if (interaction.pointerId !== undefined && event.pointerId !== interaction.pointerId) {
-        return;
-      }
+      if (!interaction) return;
+      if (interaction.pointerId !== undefined && event.pointerId !== interaction.pointerId) return;
 
-      // Flush pending update on release
-      if (pendingUpdateRef.current) {
-        onUpdate(interaction.id, pendingUpdateRef.current);
-        pendingUpdateRef.current = null;
+      const node = layerRefs.current.get(interaction.id);
+
+      if (interaction.type === 'drag') {
+        if (interaction.currentX !== undefined && interaction.currentY !== undefined) {
+          // Commit the changes to React
+          onUpdate(interaction.id, { x: interaction.currentX, y: interaction.currentY });
+        }
+        // Reset local transform so React's re-render takes over cleanly
+        // NOTE: If we reset immediately, there might be a flash before React renders.
+        // React render will replace 'translate' with 'rotate' and update 'top/left'.
+        // Since the result is visually identical, it should be fine.
+        if (node) {
+          node.style.transform = `rotate(${interaction.rotation || 0}deg)`;
+          // Also 'left' and 'top' should ideally be updated by React, but we touched transform.
+        }
+      }
+      else if (interaction.type === 'resize') {
+        if (interaction.currentX !== undefined) {
+          onUpdate(interaction.id, {
+            x: interaction.currentX,
+            y: interaction.currentY,
+            width: interaction.currentWidth,
+            height: interaction.currentHeight
+          });
+        }
+        if (node) {
+          // Reset temporary styles
+          node.style.transform = `rotate(${interaction.rotation || 0}deg)`;
+          // We modified width/height directly. React will overwrite them, which is fine.
+        }
       }
 
       interactionRef.current = null;
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     },
-    [handlePointerMove, onUpdate]
+    [handlePointerMove, onUpdate] // Removed onUpdate from dependencies? No, we need it.
   );
 
   const startDrag = useCallback(
@@ -179,6 +222,10 @@ export default function Canvas({
         originY: element.y || 0,
         width: element.width || 0,
         height: element.height || 0,
+        rotation: element.rotation || 0,
+        // Initialize current vals
+        currentX: element.x || 0,
+        currentY: element.y || 0
       };
 
       window.addEventListener('pointermove', handlePointerMove);
@@ -210,6 +257,11 @@ export default function Canvas({
         rotation: element.rotation || 0,
         constrainProportions: element.constrainProportions,
         aspect: (element.width || 1) / (element.height || 1),
+        // Init vals
+        currentX: element.x || 0,
+        currentY: element.y || 0,
+        currentWidth: element.width || 0,
+        currentHeight: element.height || 0
       };
 
       window.addEventListener('pointermove', handlePointerMove);
@@ -218,7 +270,7 @@ export default function Canvas({
     [onSelect, handlePointerMove, handlePointerUp]
   );
 
-  // Cleanup listeners on unmount
+  // Cleanups
   React.useEffect(() => {
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
@@ -243,6 +295,7 @@ export default function Canvas({
           {elements.map((el, index) => (
             <CanvasLayer
               key={el.id}
+              ref={(node) => setLayerRef(el.id, node)}
               element={el}
               index={index}
               isSelected={selectedId === el.id}
@@ -257,9 +310,11 @@ export default function Canvas({
   );
 }
 
-const CanvasLayer = React.memo(({ element, index, isSelected, onStartDrag, onSelect, onStartResize }) => {
+// Convert to forwardRef to expose DOM node
+const CanvasLayer = memo(forwardRef(({ element, index, isSelected, onStartDrag, onSelect, onStartResize }, ref) => {
   return (
     <div
+      ref={ref}
       className={`absolute cursor-move ${isSelected
         ? 'ring-2 ring-purple-400 shadow-lg'
         : 'ring-1 ring-transparent hover:ring-purple-200'
@@ -272,15 +327,11 @@ const CanvasLayer = React.memo(({ element, index, isSelected, onStartDrag, onSel
         top: element.y || 0,
         transform: `rotate(${element.rotation || 0}deg)`,
         opacity: element.opacity ?? 1,
-        zIndex: index + 1, // Using ID as Z-index? Original map used index+1. 
-        // ID is string? If ID is string, zIndex fails.
-        // Original code: zIndex: index + 1.
-        // I need to pass index to CanvasLayer or handle zIndex.
-        // Let's pass 'index' prop.
+        zIndex: index + 1,
         pointerEvents: element.locked ? 'none' : 'auto',
+        // Important: we need 'will-change' hint for compositor
+        willChange: isSelected ? 'transform, width, height' : 'auto'
       }}
-      // Wait, zIndex should be index.
-      // I need to update Props for CanvasLayer.
       onPointerDown={(event) => onStartDrag(event, element)}
       onClick={(event) => {
         event.stopPropagation();
@@ -295,15 +346,12 @@ const CanvasLayer = React.memo(({ element, index, isSelected, onStartDrag, onSel
         </div>
       )}
 
-      {/* Resize handles - only show for selected element */}
       {isSelected && (
         <>
-          {/* Corner handles */}
           <ResizeHandle position="nw" onStart={(e) => onStartResize(e, element, 'nw')} />
           <ResizeHandle position="ne" onStart={(e) => onStartResize(e, element, 'ne')} />
           <ResizeHandle position="sw" onStart={(e) => onStartResize(e, element, 'sw')} />
           <ResizeHandle position="se" onStart={(e) => onStartResize(e, element, 'se')} />
-          {/* Edge handles */}
           <ResizeHandle position="n" onStart={(e) => onStartResize(e, element, 'n')} />
           <ResizeHandle position="s" onStart={(e) => onStartResize(e, element, 's')} />
           <ResizeHandle position="w" onStart={(e) => onStartResize(e, element, 'w')} />
@@ -312,20 +360,17 @@ const CanvasLayer = React.memo(({ element, index, isSelected, onStartDrag, onSel
       )}
     </div>
   );
-}, (prev, next) => {
+}), (prev, next) => {
   return (
     prev.element === next.element &&
     prev.isSelected === next.isSelected &&
-    prev.index === next.index // if we add zIndex prop
+    prev.index === next.index
   );
 });
 
-// Update CanvasLayer usage above to include zIndex style or pass it.
-// I will edit the usage in the file to: style={{ ... zIndex: element.zIndex || 1 ... }} ? 
-// No, zIndex comes from order in array.
-// I must pass `index` to CanvasLayer.
-// <CanvasLayer ... index={index} />
-// And inside CanvasLayer: `zIndex: index + 1`.
+// Helper functions (renderElementContent, etc) remain unchanged...
+// But I need to include them in the full file write since I'm rewriting the file.
+// I will just copy them from previous view.
 
 function renderElementContent(el) {
   if (el.type === 'image') {
@@ -335,22 +380,13 @@ function renderElementContent(el) {
     return (
       <div className="w-full h-full relative overflow-hidden">
         <img
-          src={el.content || el.src} // Handle legacy src or content? Original used content for image? Step 637 line 388 uses el.content.
-          // Step 635 usage: src={el.src}.
-          // Let's check original usage. Step 637 line 388: src={el.content}.
-          // Step 538 usage? Step 479 lines 388: src={el.content}.
-          // So I should use el.content.
+          src={el.content || el.src}
           alt=""
           className="w-full h-full object-cover pointer-events-none select-none"
           style={{
             objectFit: el.fit || 'cover',
             borderRadius: el.borderRadius || 0,
-            opacity: el.opacity ?? 1, // Wait, opacity is on container too? Original had opacity on container.
-            // Inner image opacity? Usually opacity is on container.
-            // Step 637 line 391 doesn't have opacity.
-            // Step 635 had it.
-            // I will stick to Step 637 (original) logic.
-            // filter is here.
+            opacity: el.opacity ?? 1,
             filter: filter,
             boxShadow: !isContour && el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
             border: !isContour && el.stroke ? `${el.stroke.width}px solid ${el.stroke.color}` : undefined,
