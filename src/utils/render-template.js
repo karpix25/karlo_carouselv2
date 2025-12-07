@@ -23,7 +23,7 @@ function renderTemplate(template, data = {}) {
         const source = resolveContent(el, data);
         const isContour = el.contour;
 
-        // Filter logic
+        // Filter logic (only for contour mode)
         let filterStyle = '';
         if (isContour) {
           const filters = [];
@@ -42,12 +42,28 @@ function renderTemplate(template, data = {}) {
           }
         }
 
-        const shadowStyle = (!isContour && el.shadow) ? `box-shadow: ${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'};` : '';
-        const borderStyle = (!isContour && el.stroke) ? `border: ${el.stroke.width}px solid ${el.stroke.color};` : '';
+        // For non-contour mode, apply shadow and border directly to img
+        const imgShadowStyle = (!isContour && el.shadow) ? `box-shadow: ${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'};` : '';
+        const imgBorderStyle = (!isContour && el.stroke) ? `border: ${el.stroke.width}px solid ${el.stroke.color};` : '';
 
         return `
-          <div style="${style} ${shadowStyle} ${borderStyle}">
-            <img src="${source}" style="width: 100%; height: 100%; object-fit: ${el.fit || 'cover'}; border-radius: ${el.borderRadius || 0}px; ${filterStyle}" />
+          <div style="${style}">
+            <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+              <img 
+                src="${source}" 
+                style="
+                  width: 100%; 
+                  height: 100%; 
+                  object-fit: ${el.fit || 'cover'}; 
+                  border-radius: ${el.borderRadius || 0}px; 
+                  ${filterStyle}
+                  ${imgShadowStyle}
+                  ${imgBorderStyle}
+                  pointer-events: none;
+                  user-select: none;
+                " 
+              />
+            </div>
           </div>
         `;
       }
@@ -87,11 +103,13 @@ function renderTemplate(template, data = {}) {
       // Parse **text** for highlighting
       const parseHighlightedText = (text, highlightColor) => {
         if (!text) return '';
+        const padding = el.highlightPadding ?? 3;
+        const radius = el.highlightRadius ?? 6;
         const parts = text.split(/(\*\*.*?\*\*)/g);
         return parts.map(part => {
           if (part.startsWith('**') && part.endsWith('**')) {
             const content = part.slice(2, -2);
-            return ` <span style="background-color: ${highlightColor || '#ffeb3b'}; padding: 3px 8px; border-radius: 6px; display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone;">${escapeHtml(content)}</span> `;
+            return ` <span style="background-color: ${highlightColor || '#ffeb3b'}; padding: ${padding}px 8px; border-radius: ${radius}px; display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone;">${escapeHtml(content)}</span> `;
           }
           return escapeHtml(part);
         }).join('');
@@ -99,6 +117,7 @@ function renderTemplate(template, data = {}) {
 
       const textContent = parseHighlightedText(rawText, el.highlightColor);
       const shadowStyle = el.shadow ? `text-shadow: ${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'};` : '';
+      const strokeStyle = el.stroke ? `-webkit-text-stroke: ${el.stroke.width}px ${el.stroke.color};` : '';
 
       let resizingStyle = 'white-space: pre-wrap;';
       let fittyClass = '';
@@ -134,6 +153,7 @@ function renderTemplate(template, data = {}) {
             word-break: ${el.wordBreak ? 'break-all' : 'normal'};
             ${resizingStyle}
             ${shadowStyle}
+            ${strokeStyle}
           ">${textContent}</div>
         </div>
       `;
