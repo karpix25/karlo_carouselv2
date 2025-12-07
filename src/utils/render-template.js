@@ -54,9 +54,17 @@ function renderTemplate(template, data = {}) {
 
       if (el.type === 'shape') {
         const shadowStyle = el.shadow ? `box-shadow: ${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'};` : '';
-        const backgroundStyle = el.gradient?.enabled
-          ? `background: linear-gradient(${el.gradient.angle || 90}deg, ${el.gradient.start || '#000'}, ${el.gradient.end || '#fff'});`
-          : `background-color: ${el.backgroundColor || '#000'};`;
+
+        let backgroundStyle;
+        if (el.gradient?.enabled) {
+          const startColor = el.gradient.start || '#000000';
+          const endColor = el.gradient.end || '#ffffff';
+          const startOpacity = el.gradient.startOpacity ?? 1;
+          const endOpacity = el.gradient.endOpacity ?? 1;
+          backgroundStyle = `background: linear-gradient(${el.gradient.angle || 90}deg, ${hexToRgba(startColor, startOpacity)}, ${hexToRgba(endColor, endOpacity)});`;
+        } else {
+          backgroundStyle = `background-color: ${el.backgroundColor || '#000'};`;
+        }
 
         return `
           <div style="${style} ${backgroundStyle} border-radius: ${el.borderRadius || 0
@@ -272,6 +280,13 @@ function buildFontLinks(elements) {
       return `https://fonts.googleapis.com/css2?family=${font.googleId}&display=swap`;
     })
     .filter(Boolean);
+}
+
+function hexToRgba(hex, alpha = 1) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 module.exports = { renderTemplate };

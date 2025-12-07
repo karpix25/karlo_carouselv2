@@ -759,7 +759,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             ) : (
               <>
                 <Field label="Start Color">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mb-2">
                     <div
                       className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0"
                       style={{ backgroundColor: element.gradient?.start || '#000000' }}
@@ -781,9 +781,22 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                       />
                     </div>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs text-gray-500 w-12">Opacity</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={element.gradient?.startOpacity ?? 1}
+                      onChange={(e) => onChange({ gradient: { ...element.gradient, startOpacity: parseFloat(e.target.value) } })}
+                      className="flex-1 accent-purple-600"
+                    />
+                    <div className="text-xs text-gray-500 w-8 text-right">{Math.round((element.gradient?.startOpacity ?? 1) * 100)}%</div>
+                  </div>
                 </Field>
                 <Field label="End Color">
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mb-2">
                     <div
                       className="w-10 h-10 rounded-lg border shadow-sm flex-shrink-0"
                       style={{ backgroundColor: element.gradient?.end || '#ffffff' }}
@@ -804,6 +817,19 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                         className="bg-transparent w-full outline-none text-sm font-mono"
                       />
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs text-gray-500 w-12">Opacity</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={element.gradient?.endOpacity ?? 1}
+                      onChange={(e) => onChange({ gradient: { ...element.gradient, endOpacity: parseFloat(e.target.value) } })}
+                      className="flex-1 accent-purple-600"
+                    />
+                    <div className="text-xs text-gray-500 w-8 text-right">{Math.round((element.gradient?.endOpacity ?? 1) * 100)}%</div>
                   </div>
                 </Field>
                 <Field label="Angle">

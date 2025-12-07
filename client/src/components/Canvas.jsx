@@ -268,6 +268,13 @@ function getDropShadowFilter(stroke, shadow, isContour) {
   return filters.length > 0 ? filters.join(' ') : undefined;
 }
 
+function hexToRgba(hex, alpha = 1) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function renderElementContent(el) {
   if (el.type === 'image') {
     const isContour = el.contour;
@@ -292,8 +299,13 @@ function renderElementContent(el) {
   }
 
   if (el.type === 'shape') {
+    const startColor = el.gradient?.start || '#000000';
+    const endColor = el.gradient?.end || '#ffffff';
+    const startOpacity = el.gradient?.startOpacity ?? 1;
+    const endOpacity = el.gradient?.endOpacity ?? 1;
+
     const background = el.gradient?.enabled
-      ? `linear-gradient(${el.gradient.angle || 90}deg, ${el.gradient.start || '#000'}, ${el.gradient.end || '#fff'})`
+      ? `linear-gradient(${el.gradient.angle || 90}deg, ${hexToRgba(startColor, startOpacity)}, ${hexToRgba(endColor, endOpacity)})`
       : (el.backgroundColor || '#333');
 
     return (
