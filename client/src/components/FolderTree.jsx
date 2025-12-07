@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Folder, FolderOpen, File, Trash2, ChevronRight, ChevronDown, Plus } from 'lucide-react';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useTranslation } from '../hooks/useTranslation';
@@ -64,6 +64,11 @@ function FolderItem({ folder, templates, onDeleteTemplate, onDeleteFolder, onRen
 
     const folderTemplates = templates.filter(t => t.folderId === folder.id);
 
+    // Make folder droppable
+    const { setNodeRef, isOver } = useDroppable({
+        id: folder.id,
+    });
+
     const handleRename = () => {
         if (name.trim() && name !== folder.name) {
             onRename(folder.id, name.trim());
@@ -73,7 +78,11 @@ function FolderItem({ folder, templates, onDeleteTemplate, onDeleteFolder, onRen
 
     return (
         <div className="space-y-1">
-            <div className="group flex items-center gap-2 px-3 py-2 hover:bg-purple-50 rounded-lg transition-colors">
+            <div
+                ref={setNodeRef}
+                className={`group flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${isOver ? 'bg-purple-100 border-2 border-purple-400' : 'hover:bg-purple-50'
+                    }`}
+            >
                 <button
                     onClick={onToggle}
                     className="p-0.5 hover:bg-purple-100 rounded transition-colors"
