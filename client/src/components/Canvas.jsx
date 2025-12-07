@@ -368,9 +368,14 @@ const CanvasLayer = memo(forwardRef(({ element, index, isSelected, onStartDrag, 
   );
 });
 
-// Helper functions (renderElementContent, etc) remain unchanged...
-// But I need to include them in the full file write since I'm rewriting the file.
-// I will just copy them from previous view.
+// Helper functions (outside component for stability)
+function hexToRgba(hex, opacity = 1) {
+  if (!hex) return 'rgba(0, 0, 0, 1)';
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
 
 function renderElementContent(el) {
   if (el.type === 'image') {
@@ -388,7 +393,7 @@ function renderElementContent(el) {
             borderRadius: el.borderRadius || 0,
             opacity: el.opacity ?? 1,
             filter: filter,
-            boxShadow: !isContour && el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
+            boxShadow: !isContour && el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${hexToRgba(el.shadow.color || '#000000', el.shadow.opacity ?? 1)}` : undefined,
             border: !isContour && el.stroke ? `${el.stroke.width}px solid ${el.stroke.color}` : undefined,
           }}
           draggable={false}
@@ -400,7 +405,7 @@ function renderElementContent(el) {
   if (el.type === 'shape') {
     let background = getBackground(el);
     const shadowStyle = el.shadow
-      ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}`
+      ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${hexToRgba(el.shadow.color || '#000000', el.shadow.opacity ?? 1)}`
       : undefined;
 
     return (
@@ -506,7 +511,7 @@ const TextRenderer = ({ el }) => {
           letterSpacing: typeof el.letterSpacing === 'number' ? `${el.letterSpacing}px` : undefined,
           textTransform: el.textTransform || 'none',
           wordBreak: el.wordBreak ? 'break-all' : 'normal',
-          textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${el.shadow.color || '#000000'}` : undefined,
+          textShadow: el.shadow ? `${el.shadow.x || 0}px ${el.shadow.y || 0}px ${el.shadow.blur || 0}px ${hexToRgba(el.shadow.color || '#000000', el.shadow.opacity ?? 1)}` : undefined,
           WebkitTextStroke: el.stroke ? `${el.stroke.width}px ${el.stroke.color}` : undefined,
           ...getResizingStyles(),
         }}
@@ -583,7 +588,8 @@ function getDropShadowFilter(stroke, shadow, isContour) {
   }
 
   if (shadow) {
-    filters.push(`drop-shadow(${shadow.x || 0}px ${shadow.y || 0}px ${shadow.blur || 0}px ${shadow.color || '#000000'})`);
+    const shadowColor = hexToRgba(shadow.color || '#000000', shadow.opacity ?? 1);
+    filters.push(`drop-shadow(${shadow.x || 0}px ${shadow.y || 0}px ${shadow.blur || 0}px ${shadowColor})`);
   }
 
   return filters.length > 0 ? filters.join(' ') : undefined;
