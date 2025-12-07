@@ -966,7 +966,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
             <input
               type="number"
               value={element.borderRadius || 0}
-              onChange={(e) => handleNumberChange('borderRadius')(parseInt(e.target.value, 10))}
+              onChange={handleInputChange('borderRadius')}
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
