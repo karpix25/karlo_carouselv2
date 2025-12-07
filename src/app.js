@@ -1,6 +1,6 @@
 const Router = require("@koa/router");
 const Koa = require("koa");
-const bodyParser = require("koa-bodyparser");
+const bodyParser = require("koa-body").default;
 const serve = require("koa-static");
 const path = require("path");
 const errorHandler = require("./utils/middleware/error-handler");
