@@ -15,8 +15,6 @@ export default function Canvas({
   showGrid,
 }) {
   const interactionRef = useRef(null);
-  const frameRef = useRef(null);
-  const pendingUpdateRef = useRef(null);
 
   const backgroundStyle = showGrid
     ? {
@@ -25,15 +23,6 @@ export default function Canvas({
       backgroundSize: '40px 40px',
     }
     : { backgroundColor: '#1f1f1f' };
-
-  const performUpdate = useCallback(() => {
-    frameRef.current = null;
-    const interaction = interactionRef.current;
-    if (!interaction || !pendingUpdateRef.current) return;
-
-    onUpdate(interaction.id, pendingUpdateRef.current);
-    pendingUpdateRef.current = null;
-  }, [onUpdate]);
 
   const handlePointerMove = useCallback(
     (event) => {
@@ -46,13 +35,11 @@ export default function Canvas({
       const deltaX = (event.clientX - interaction.startClientX) / zoom;
       const deltaY = (event.clientY - interaction.startClientY) / zoom;
 
-      let updatePayload = null;
-
       if (interaction.type === 'drag') {
         const nextX = clamp(interaction.originX + deltaX, 0, Math.max(0, width - interaction.width));
         const nextY = clamp(interaction.originY + deltaY, 0, Math.max(0, height - interaction.height));
 
-        updatePayload = { x: Math.round(nextX), y: Math.round(nextY) };
+        onUpdate(interaction.id, { x: Math.round(nextX), y: Math.round(nextY) });
 
       } else if (interaction.type === 'resize') {
         const handle = interaction.handle;
@@ -124,22 +111,15 @@ export default function Canvas({
         const newX = interaction.originX + shiftX - finalDW / 2;
         const newY = interaction.originY + shiftY - finalDH / 2;
 
-        updatePayload = {
+        onUpdate(interaction.id, {
           x: Math.round(newX),
           y: Math.round(newY),
           width: newWidth,
           height: newHeight,
-        };
-      }
-
-      if (updatePayload) {
-        pendingUpdateRef.current = updatePayload;
-        if (!frameRef.current) {
-          frameRef.current = requestAnimationFrame(performUpdate);
-        }
+        });
       }
     },
-    [onUpdate, width, height, zoom, performUpdate]
+    [onUpdate, width, height, zoom]
   );
 
   const handlePointerUp = useCallback(
@@ -152,22 +132,11 @@ export default function Canvas({
         return;
       }
 
-      // Cancel any pending frame
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-        frameRef.current = null;
-      }
-      // If there's a pending update that hasn't run, run it now?
-      if (pendingUpdateRef.current) {
-        onUpdate(interaction.id, pendingUpdateRef.current);
-        pendingUpdateRef.current = null;
-      }
-
       interactionRef.current = null;
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     },
-    [handlePointerMove, onUpdate]
+    [handlePointerMove]
   );
 
   const startDrag = useCallback(
