@@ -125,7 +125,7 @@ transform: rotate(${el.rotation || 0}deg);
                 "
       />
     </div>
-          </div >
+          </div>
   `;
       }
 
@@ -148,14 +148,15 @@ transform: rotate(${el.rotation || 0}deg);
             const startPos = el.gradient.startPosition ?? 0;
             const endPos = el.gradient.endPosition ?? 100;
             backgroundStyle = `background: linear - gradient(${el.gradient.angle || 90}deg, ${hexToRgba(startColor, startOpacity)} ${startPos} %, ${hexToRgba(endColor, endOpacity)} ${endPos} %); `;
+            backgroundStyle = `background: linear-gradient(${el.gradient.angle || 90}deg, ${hexToRgba(startColor, startOpacity)} ${startPos}%, ${hexToRgba(endColor, endOpacity)} ${endPos}%); `;
           }
         } else {
-          backgroundStyle = `background - color: ${el.backgroundColor || '#000'}; `;
+          backgroundStyle = `background-color: ${el.backgroundColor || '#000'}; `;
         }
 
         return `
-  < div style = "${style} ${backgroundStyle} border-radius: ${el.borderRadius || 0
-          }px; ${shadowStyle} "></div>
+  <div style="${style} ${backgroundStyle} border-radius: ${el.borderRadius || 0
+          }px; ${shadowStyle}"></div>
   `;
       }
 
@@ -226,36 +227,36 @@ transform: rotate(${el.rotation || 0}deg);
       }
 
       return `
-  < div style = "${style}
-background - color: ${el.backgroundColor || 'transparent'};
+  <div style="${style}
+background-color: ${el.backgroundColor || 'transparent'};
 display: flex;
-align - items: ${resolveVerticalAlignment(el.verticalAlign)};
+align-items: ${resolveVerticalAlignment(el.verticalAlign)};
 overflow: hidden;
 ">
-  < div class="${fittyClass}" style = "
-width: 100 %;
-text - align: ${el.textAlign || 'left'};
-font - family: ${getFontStackValue(el.fontFamily)};
-font - size: ${el.fontSize || 16} px;
-font - weight: ${el.fontWeight || 400};
-font - style: ${el.fontStyle || 'normal'};
-text - decoration: ${el.textDecoration || 'none'};
+  <div class="${fittyClass}" style="
+width: 100%;
+text-align: ${el.textAlign || 'left'};
+font-family: ${getFontStackValue(el.fontFamily)};
+font-size: ${el.fontSize || 16}px;
+font-weight: ${el.fontWeight || 400};
+font-style: ${el.fontStyle || 'normal'};
+text-decoration: ${el.textDecoration || 'none'};
 color: ${el.color || '#000'};
-line - height: ${el.lineHeight || 1.2};
-letter - spacing: ${formatLetterSpacing(el.letterSpacing)};
-text - transform: ${el.textTransform || 'none'};
-word -break: ${el.wordBreak ? 'break-all' : 'normal'};
+line-height: ${el.lineHeight || 1.2};
+letter-spacing: ${formatLetterSpacing(el.letterSpacing)};
+text-transform: ${el.textTransform || 'none'};
+word-break: ${el.wordBreak ? 'break-all' : 'normal'};
             ${resizingStyle}
             ${shadowStyle}
             ${strokeStyle}
 ">${textContent}</div>
-        </div >
+        </div>
   `;
     })
     .join('');
 
   const fittyScript = `
-  < script >
+  <script>
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
     let min = 10;
