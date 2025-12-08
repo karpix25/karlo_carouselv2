@@ -484,7 +484,7 @@ const TextRenderer = ({ el }) => {
     };
   };
 
-  const processedText = ((el.content_preview || el.content || '')).replace(/\\n/g, '\n').trim();
+  const processedText = keepEmojiWithWord((el.content_preview || el.content || '').replace(/\\n/g, '\n')).trim();
   const overflowWrapValue = el.wordBreak ? 'anywhere' : 'normal';
 
   return (
@@ -533,6 +533,16 @@ const TextRenderer = ({ el }) => {
     </div>
   );
 };
+
+const EMOJI_WITH_SPACE_REGEX = /(^|\n)([\p{Extended_Pictographic}]+)([ \t]+)/gu;
+
+function keepEmojiWithWord(text) {
+  if (!text) return '';
+  return text.replace(EMOJI_WITH_SPACE_REGEX, (match, prefix, emoji, spaces) => {
+    if (!spaces) return `${prefix}${emoji}`;
+    return `${prefix}${emoji}\u00a0${spaces.slice(1)}`;
+  });
+}
 
 const parseHighlightedText = (text, highlightColor, padding = 3, radius = 6, mode = 'background') => {
   if (!text) return '';

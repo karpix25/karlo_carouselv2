@@ -161,7 +161,7 @@ transform: rotate(${el.rotation || 0}deg);
       }
 
       const resolvedText = resolveTextContent(el, data) || '';
-      const rawText = resolvedText.replace(/\\n/g, '\n').trim();
+      const rawText = keepEmojiWithWord(resolvedText.replace(/\\n/g, '\n')).trim();
 
       // Parse **text** for highlighting (with mode support)
       const parseHighlightedText = (text, highlightColor) => {
@@ -415,6 +415,15 @@ function hexToRgba(hex, alpha = 1) {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+const EMOJI_WITH_SPACE_REGEX = /(^|\n)([\p{Extended_Pictographic}]+)([ \t]+)/gu;
+function keepEmojiWithWord(text) {
+  if (!text) return '';
+  return text.replace(EMOJI_WITH_SPACE_REGEX, (match, prefix, emoji, spaces) => {
+    if (!spaces) return `${prefix}${emoji}`;
+    return `${prefix}${emoji}\u00a0${spaces.slice(1)}`;
+  });
 }
 
 module.exports = { renderTemplate };
