@@ -265,16 +265,13 @@ ${overflowWrapStyle}
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
     
-    // Get initial font size from element style
-    const initialFontSize = parseInt(window.getComputedStyle(el).fontSize) || 16;
-    
-    // Set bounds based on initial size
-    let min = 8;
-    let max = Math.max(initialFontSize, 200);
-    let optimal = initialFontSize;
-    
     // Store original line-height to prevent shifting
     const lineHeight = window.getComputedStyle(el).lineHeight;
+    
+    // Always search full range for optimal size (fully adaptive)
+    let min = 8;
+    let max = 300;
+    let optimal = 16;
     
     // Binary search for optimal font size
     while (min <= max) {
