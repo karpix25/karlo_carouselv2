@@ -266,12 +266,11 @@ ${overflowWrapStyle}
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
     
-    // Check if text can wrap
-    const style = window.getComputedStyle(el);
-    const canWrap = style.whiteSpace !== 'nowrap' && 
-                    (style.overflowWrap === 'anywhere' || style.overflowWrap === 'break-word');
+    // Fitty should work like Figma/Canva auto-resize:
+    // - Text wraps to fit width
+    // - Font size scales to fit both width and height
+    // - Always respects container boundaries
     
-    // Always search full range for optimal size (fully adaptive)
     let min = 8;
     let max = 300;
     let optimal = 16;
@@ -281,17 +280,13 @@ ${overflowWrapStyle}
       const mid = Math.floor((min + max) / 2);
       el.style.fontSize = mid + 'px';
       
-      // Force reflow to get accurate measurements
+      // Force reflow for accurate measurements
       el.offsetHeight;
       
-      // Check height (always)
-      const fitsHeight = el.scrollHeight <= container.clientHeight - 1;
-      
-      // Check width only if text cannot wrap
-      let fitsWidth = true;
-      if (!canWrap) {
-        fitsWidth = el.scrollWidth <= container.clientWidth - 1;
-      }
+      // Check both dimensions (like Figma/Canva)
+      // Text wraps automatically due to overflow-wrap: anywhere
+      const fitsHeight = el.scrollHeight <= container.clientHeight;
+      const fitsWidth = el.scrollWidth <= container.clientWidth;
       
       if (fitsHeight && fitsWidth) {
         optimal = mid;
@@ -301,7 +296,7 @@ ${overflowWrapStyle}
       }
     }
     
-    // Apply optimal size (line-height will scale automatically)
+    // Apply optimal size
     el.style.fontSize = optimal + 'px';
   });
     </script>
