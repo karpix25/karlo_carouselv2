@@ -259,22 +259,34 @@ ${overflowWrapStyle}
     .join('');
 
 
+
   const fittyScript = `
   <script>
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
-    let min = 10;
-    let max = 200;
-    let optimal = 16;
-
+    
+    // Get initial font size from element style
+    const initialFontSize = parseInt(window.getComputedStyle(el).fontSize) || 16;
+    
+    // Set bounds based on initial size
+    let min = 8;
+    let max = Math.max(initialFontSize, 200);
+    let optimal = initialFontSize;
+    
+    // Store original line-height to prevent shifting
+    const lineHeight = window.getComputedStyle(el).lineHeight;
+    
     // Binary search for optimal font size
     while (min <= max) {
       const mid = Math.floor((min + max) / 2);
       el.style.fontSize = mid + 'px';
       
-      // Check if text fits within container
-      const fitsHeight = el.scrollHeight <= container.clientHeight;
-      const fitsWidth = el.scrollWidth <= container.clientWidth;
+      // Force reflow to get accurate measurements
+      void el.offsetHeight;
+      
+      // Check if text fits with small safety margin (2px)
+      const fitsHeight = el.scrollHeight <= container.clientHeight - 2;
+      const fitsWidth = el.scrollWidth <= container.clientWidth - 2;
       
       if (fitsHeight && fitsWidth) {
         optimal = mid;
@@ -284,7 +296,11 @@ ${overflowWrapStyle}
       }
     }
     
+    // Apply optimal size
     el.style.fontSize = optimal + 'px';
+    
+    // Restore line-height to prevent shifting
+    el.style.lineHeight = lineHeight;
   });
     </script>
   `;
