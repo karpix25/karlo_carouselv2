@@ -1,0 +1,36 @@
+{
+  "name": "@bedrockio/export-html",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "start:production": "node src/index",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@bedrockio/config": "^2.2.3",
+    "@bedrockio/logger": "^1.0.8",
+    "@bedrockio/yada": "^1.0.40",
+    "@koa/router": "^12.0.1",
+    "axios": "^1.13.2",
+    "koa": "^2.15.3",
+    "koa-body": "^6.0.1",
+    "koa-mount": "^4.2.0",
+    "koa-static": "^5.0.0",
+    "puppeteer": "^22.7.0",
+    "qs": "^6.12.1",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.1.1",
+    "eslint-plugin-bedrock": "^1.0.26",
+    "prettier": "^3.2.5",
+    "prettier-eslint": "^16.3.0"
+  },
+  "volta": {
+    "node": "20.12.2",
+    "yarn": "1.22.19"
+  }
+}

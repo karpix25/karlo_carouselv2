@@ -1,0 +1,352 @@
+[
+  {
+    "label": "Inter",
+    "value": "Inter",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Inter:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Roboto",
+    "value": "Roboto",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Roboto:wght@300;400;500;700;900"
+  },
+  {
+    "label": "Open Sans",
+    "value": "Open Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Open+Sans:wght@300;400;600;700"
+  },
+  {
+    "label": "Montserrat",
+    "value": "Montserrat",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Montserrat:wght@300;400;500;600;700;800"
+  },
+  {
+    "label": "Lato",
+    "value": "Lato",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Lato:wght@300;400;700;900"
+  },
+  {
+    "label": "Poppins",
+    "value": "Poppins",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Poppins:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Oswald",
+    "value": "Oswald",
+    "category": "Display",
+    "fallback": "sans-serif",
+    "googleId": "Oswald:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Raleway",
+    "value": "Raleway",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Raleway:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Playfair Display",
+    "value": "Playfair Display",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Playfair+Display:wght@400;500;600;700;800"
+  },
+  {
+    "label": "Merriweather",
+    "value": "Merriweather",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Merriweather:wght@300;400;700;900"
+  },
+  {
+    "label": "Noto Sans",
+    "value": "Noto Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Noto+Sans:wght@400;700"
+  },
+  {
+    "label": "Source Sans Pro",
+    "value": "Source Sans 3",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Source+Sans+3:wght@300;400;600;700"
+  },
+  {
+    "label": "Nunito",
+    "value": "Nunito",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Nunito:wght@300;400;600;700;800"
+  },
+  {
+    "label": "Quicksand",
+    "value": "Quicksand",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Quicksand:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Rubik",
+    "value": "Rubik",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Rubik:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Work Sans",
+    "value": "Work Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Work+Sans:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Fira Sans",
+    "value": "Fira Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Fira+Sans:wght@300;400;500;600;700"
+  },
+  {
+    "label": "PT Sans",
+    "value": "PT Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "PT+Sans:wght@400;700"
+  },
+  {
+    "label": "Cabin",
+    "value": "Cabin",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Cabin:wght@400;500;600;700"
+  },
+  {
+    "label": "DM Sans",
+    "value": "DM Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "DM+Sans:wght@400;500;700"
+  },
+  {
+    "label": "Space Grotesk",
+    "value": "Space Grotesk",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Space+Grotesk:wght@300;400;500;600;700"
+  },
+  {
+    "label": "Sora",
+    "value": "Sora",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Sora:wght@300;400;600;700"
+  },
+  {
+    "label": "Archivo",
+    "value": "Archivo",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Archivo:wght@300;400;600;700"
+  },
+  {
+    "label": "Barlow",
+    "value": "Barlow",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Barlow:wght@300;400;600;700"
+  },
+  {
+    "label": "Karla",
+    "value": "Karla",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Karla:wght@300;400;600;700"
+  },
+  {
+    "label": "Manrope",
+    "value": "Manrope",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Manrope:wght@300;400;600;700"
+  },
+  {
+    "label": "Bebas Neue",
+    "value": "Bebas Neue",
+    "category": "Display",
+    "fallback": "sans-serif",
+    "googleId": "Bebas+Neue"
+  },
+  {
+    "label": "Anton",
+    "value": "Anton",
+    "category": "Display",
+    "fallback": "sans-serif",
+    "googleId": "Anton"
+  },
+  {
+    "label": "Lobster",
+    "value": "Lobster",
+    "category": "Display",
+    "fallback": "cursive",
+    "googleId": "Lobster"
+  },
+  {
+    "label": "Pacifico",
+    "value": "Pacifico",
+    "category": "Handwriting",
+    "fallback": "cursive",
+    "googleId": "Pacifico"
+  },
+  {
+    "label": "Dancing Script",
+    "value": "Dancing Script",
+    "category": "Handwriting",
+    "fallback": "cursive",
+    "googleId": "Dancing+Script:wght@400;700"
+  },
+  {
+    "label": "Lora",
+    "value": "Lora",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Lora:wght@400;600;700"
+  },
+  {
+    "label": "Libre Baskerville",
+    "value": "Libre Baskerville",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Libre+Baskerville:wght@400;700"
+  },
+  {
+    "label": "Crimson Text",
+    "value": "Crimson Text",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Crimson+Text:wght@400;600;700"
+  },
+  {
+    "label": "Roboto Slab",
+    "value": "Roboto Slab",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Roboto+Slab:wght@300;400;600;700"
+  },
+  {
+    "label": "Bitter",
+    "value": "Bitter",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Bitter:wght@400;600;700"
+  },
+  {
+    "label": "Alegreya",
+    "value": "Alegreya",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Alegreya:wght@400;600;700"
+  },
+  {
+    "label": "Cormorant",
+    "value": "Cormorant",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Cormorant:wght@400;600;700"
+  },
+  {
+    "label": "Vollkorn",
+    "value": "Vollkorn",
+    "category": "Serif",
+    "fallback": "serif",
+    "googleId": "Vollkorn:wght@400;600;700"
+  },
+  {
+    "label": "Roboto Mono",
+    "value": "Roboto Mono",
+    "category": "Monospace",
+    "fallback": "monospace",
+    "googleId": "Roboto+Mono:wght@400;700"
+  },
+  {
+    "label": "Inconsolata",
+    "value": "Inconsolata",
+    "category": "Monospace",
+    "fallback": "monospace",
+    "googleId": "Inconsolata:wght@400;700"
+  },
+  {
+    "label": "Ubuntu",
+    "value": "Ubuntu",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Ubuntu:wght@300;400;500;700"
+  },
+  {
+    "label": "Titillium Web",
+    "value": "Titillium Web",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Titillium+Web:wght@300;400;600;700"
+  },
+  {
+    "label": "Mukta",
+    "value": "Mukta",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Mukta:wght@300;400;600;700"
+  },
+  {
+    "label": "Josefin Sans",
+    "value": "Josefin Sans",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Josefin+Sans:wght@300;400;600;700"
+  },
+  {
+    "label": "Exo 2",
+    "value": "Exo 2",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Exo+2:wght@300;400;600;700"
+  },
+  {
+    "label": "Hind",
+    "value": "Hind",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Hind:wght@300;400;600;700"
+  },
+  {
+    "label": "Oxygen",
+    "value": "Oxygen",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Oxygen:wght@300;400;700"
+  },
+  {
+    "label": "Arimo",
+    "value": "Arimo",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Arimo:wght@400;600;700"
+  },
+  {
+    "label": "Heebo",
+    "value": "Heebo",
+    "category": "Sans Serif",
+    "fallback": "sans-serif",
+    "googleId": "Heebo:wght@300;400;600;700"
+  }
+]

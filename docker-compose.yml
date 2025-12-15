@@ -1,0 +1,15 @@
+services:
+  export-html:
+    container_name: export-carousel
+    platform: linux/amd64
+    user: root
+    environment:
+      - PUPPETEER_CACHE_DIR=/home/pptruser/.cache/puppeteer
+    volumes:
+      - ./src:/service/src
+      - ./data:/service/data
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2305:2305"
