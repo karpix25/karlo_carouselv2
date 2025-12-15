@@ -125,18 +125,15 @@ router.post("/:id/render", async (ctx) => {
       }
     }
 
-    // If coordinates are requested, return JSON with both image and coordinates
+    // Always return PNG image
+    ctx.set("Content-Type", "image/png");
+
+    // If coordinates exist, include them in a custom header
     if (textCoordinates.length > 0) {
-      ctx.set("Content-Type", "application/json");
-      ctx.body = {
-        image: buffer.toString('base64'),
-        textCoordinates: textCoordinates
-      };
-    } else {
-      // Otherwise return just the PNG image as before
-      ctx.set("Content-Type", "image/png");
-      ctx.body = buffer;
+      ctx.set("X-Text-Coordinates", JSON.stringify(textCoordinates));
     }
+
+    ctx.body = buffer;
   } finally {
     await page.close();
   }
@@ -189,18 +186,15 @@ router.post("/render", async (ctx) => {
       }
     }
 
-    // If coordinates are requested, return JSON with both image and coordinates
+    // Always return PNG image
+    ctx.set("Content-Type", "image/png");
+
+    // If coordinates exist, include them in a custom header
     if (textCoordinates.length > 0) {
-      ctx.set("Content-Type", "application/json");
-      ctx.body = {
-        image: buffer.toString('base64'),
-        textCoordinates: textCoordinates
-      };
-    } else {
-      // Otherwise return just the PNG image as before
-      ctx.set("Content-Type", "image/png");
-      ctx.body = buffer;
+      ctx.set("X-Text-Coordinates", JSON.stringify(textCoordinates));
     }
+
+    ctx.body = buffer;
   } finally {
     await page.close();
   }
