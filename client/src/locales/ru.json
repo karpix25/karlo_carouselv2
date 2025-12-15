@@ -49,6 +49,7 @@
         "alignment": "Выравнивание",
         "anchor": "Якорь",
         "wordBreak": "Перенос слов",
+        "exportCoordinates": "Экспорт координат",
         "layout": "РАСПОЛОЖЕНИЕ",
         "quickAlign": "Быстрое выравнивание",
         "x": "X",

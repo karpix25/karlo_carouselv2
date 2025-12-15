@@ -49,6 +49,7 @@
         "alignment": "Alignment",
         "anchor": "Anchor",
         "wordBreak": "Word-Break",
+        "exportCoordinates": "Export Coordinates",
         "layout": "LAYOUT",
         "quickAlign": "Quick Align",
         "x": "X",

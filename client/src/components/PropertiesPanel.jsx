@@ -481,6 +481,20 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 />
               </button>
             </div>
+
+            <div className="flex items-center justify-between">
+              <label className="text-xs text-gray-500">{t('properties.exportCoordinates')}</label>
+              <button
+                onClick={() => onChange({ exportCoordinates: !element.exportCoordinates })}
+                className={`w-12 h-6 rounded-full transition-colors relative ${element.exportCoordinates ? 'bg-purple-600' : 'bg-gray-200'
+                  }`}
+              >
+                <div
+                  className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${element.exportCoordinates ? 'translate-x-6' : ''
+                    }`}
+                />
+              </button>
+            </div>
           </CollapsibleSection>
         </>
       )}
