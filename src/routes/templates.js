@@ -125,21 +125,9 @@ router.post("/:id/render", async (ctx) => {
       }
     }
 
-    // Check if client wants coordinates in response body via query parameter
-    const includeCoordinates = ctx.query.includeCoordinates === 'true';
-
-    // If coordinates exist and client wants them in body, return JSON
-    if (textCoordinates.length > 0 && includeCoordinates) {
-      ctx.set("Content-Type", "application/json");
-      ctx.body = {
-        image: buffer.toString('base64'),
-        coordinates: textCoordinates
-      };
-    } else {
-      // Otherwise return PNG (default behavior for backward compatibility)
-      ctx.set("Content-Type", "image/png");
-      ctx.body = buffer;
-    }
+    // Always return PNG file
+    ctx.set("Content-Type", "image/png");
+    ctx.body = buffer;
 
     // Include coordinates in header if any elements have exportCoordinates
     if (textCoordinates.length > 0) {
