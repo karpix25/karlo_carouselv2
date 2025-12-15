@@ -260,13 +260,15 @@ ${overflowWrapStyle}
 
 
 
+
   const fittyScript = `
   <script>
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
     
-    // Store original line-height to prevent shifting
-    const lineHeight = window.getComputedStyle(el).lineHeight;
+    // Get original line-height value
+    const computedStyle = window.getComputedStyle(el);
+    const originalLineHeight = computedStyle.lineHeight;
     
     // Always search full range for optimal size (fully adaptive)
     let min = 8;
@@ -279,13 +281,13 @@ ${overflowWrapStyle}
       el.style.fontSize = mid + 'px';
       
       // Force reflow to get accurate measurements
-      void el.offsetHeight;
+      el.offsetHeight;
       
-      // Check if text fits with small safety margin (2px)
-      const fitsHeight = el.scrollHeight <= container.clientHeight - 2;
-      const fitsWidth = el.scrollWidth <= container.clientWidth - 2;
+      // For wrapped text, only check height (width check causes issues)
+      // Add small margin to prevent edge cases
+      const fits = el.scrollHeight <= container.clientHeight - 1;
       
-      if (fitsHeight && fitsWidth) {
+      if (fits) {
         optimal = mid;
         min = mid + 1;
       } else {
@@ -296,8 +298,10 @@ ${overflowWrapStyle}
     // Apply optimal size
     el.style.fontSize = optimal + 'px';
     
-    // Restore line-height to prevent shifting
-    el.style.lineHeight = lineHeight;
+    // Restore original line-height
+    if (originalLineHeight !== 'normal') {
+      el.style.lineHeight = originalLineHeight;
+    }
   });
     </script>
   `;
