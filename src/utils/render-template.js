@@ -266,6 +266,11 @@ ${overflowWrapStyle}
   document.querySelectorAll('.fitty-text').forEach(el => {
     const container = el.parentElement;
     
+    // Check if text can wrap
+    const style = window.getComputedStyle(el);
+    const canWrap = style.whiteSpace !== 'nowrap' && 
+                    (style.overflowWrap === 'anywhere' || style.overflowWrap === 'break-word');
+    
     // Always search full range for optimal size (fully adaptive)
     let min = 8;
     let max = 300;
@@ -279,11 +284,16 @@ ${overflowWrapStyle}
       // Force reflow to get accurate measurements
       el.offsetHeight;
       
-      // For wrapped text, only check height (width check causes issues)
-      // Add small margin to prevent edge cases
-      const fits = el.scrollHeight <= container.clientHeight - 1;
+      // Check height (always)
+      const fitsHeight = el.scrollHeight <= container.clientHeight - 1;
       
-      if (fits) {
+      // Check width only if text cannot wrap
+      let fitsWidth = true;
+      if (!canWrap) {
+        fitsWidth = el.scrollWidth <= container.clientWidth - 1;
+      }
+      
+      if (fitsHeight && fitsWidth) {
         optimal = mid;
         min = mid + 1;
       } else {
