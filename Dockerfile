@@ -19,12 +19,13 @@ WORKDIR /service
 COPY package.json yarn.lock ./
 USER root
 RUN apt-get update && apt-get install -y fonts-noto-color-emoji && rm -rf /var/lib/apt/lists/*
-USER pptruser
 RUN yarn install --frozen-lockfile
 
 COPY . .
-RUN touch .env
+RUN touch .env && chown pptruser:pptruser .env
 COPY --from=client-build /client/dist ./client/dist
+
+USER pptruser
 
 ENV PORT 2305
 EXPOSE 2305
