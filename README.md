@@ -12,7 +12,7 @@ _Примечание по безопасности: Сервис предназ
 ### Локальный запуск (для разработки)
 
 ```bash
-git clone https://github.com/karpix25/carousel_karlo.git
+git clone https://github.com/Ksandeer/carousel.git
 cd export-html
 yarn install
 yarn start
