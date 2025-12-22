@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, ArrowDown, Copy, Trash2, Lock, Unlock } from 'lucide-react';
+import { ArrowUp, ArrowDown, Copy, Trash2, Lock, Unlock, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import Tooltip from './Tooltip';
 
@@ -109,6 +109,13 @@ export default function LayersPanel({
                     {layer.locked ? <Lock size={14} className="text-red-500" /> : <Unlock size={14} />}
                   </LayerIconButton>
                 </Tooltip>
+                
+                <Tooltip text={layer.visible === false ? t('tooltips.layers.show') : t('tooltips.layers.hide')}>
+                  <LayerIconButton onClick={() => onUpdate(layer.id, { visible: layer.visible === false })}>
+                    {layer.visible === false ? <EyeOff size={14} className="text-gray-400" /> : <Eye size={14} />}
+                  </LayerIconButton>
+                </Tooltip>
+
                 <Tooltip text={t('tooltips.layers.moveUp')}>
                   <LayerIconButton disabled={isTop} onClick={() => onMoveLayer(layer.id, 'up')}>
                     <ArrowUp size={14} />

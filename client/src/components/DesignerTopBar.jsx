@@ -1,5 +1,5 @@
 import React from 'react';
-import { Save, Grid3X3, Grid, Lock, Unlock, Globe } from 'lucide-react';
+import { Save, Grid3X3, Grid, Lock, Unlock, Globe, Undo2, Redo2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import Tooltip from './Tooltip';
 
@@ -16,6 +16,10 @@ export default function DesignerTopBar({
   showGrid,
   onToggleGrid,
   onSave,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
 }) {
   const { t, language, setLanguage } = useTranslation();
 
@@ -109,6 +113,29 @@ export default function DesignerTopBar({
             {showGrid ? t('topbar.showGrid').replace('Показать', 'Скрыть').replace('Show', 'Hide') : t('topbar.showGrid')}
           </button>
         </Tooltip>
+
+        <div className="flex items-center gap-1 border-r pr-3 mr-3 border-gray-200">
+          <Tooltip text={t('tooltips.topbar.undo')}>
+            <button
+              type="button"
+              onClick={onUndo}
+              disabled={!canUndo}
+              className={`p-2 rounded-full transition-colors ${!canUndo ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              <Undo2 size={20} />
+            </button>
+          </Tooltip>
+          <Tooltip text={t('tooltips.topbar.redo')}>
+            <button
+              type="button"
+              onClick={onRedo}
+              disabled={!canRedo}
+              className={`p-2 rounded-full transition-colors ${!canRedo ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              <Redo2 size={20} />
+            </button>
+          </Tooltip>
+        </div>
 
         <Tooltip text={t('tooltips.topbar.save')}>
           <button

@@ -418,9 +418,50 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 onDynamicChange={(checked) => onChange({ backgroundColorDynamic: checked })}
                 t={t}
               />
+
+              <div className="flex items-center gap-2 pt-1">
+                <span className="text-xs text-gray-500 w-16">{t('properties.opacity')}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={Math.round((element.backgroundOpacity ?? 1) * 100)}
+                  onChange={(e) => onChange({ backgroundOpacity: parseInt(e.target.value) / 100 })}
+                  className="flex-1 accent-purple-600 h-1.5"
+                />
+                <span className="text-xs text-gray-500 w-8 text-right">{Math.round((element.backgroundOpacity ?? 1) * 100)}%</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="space-y-1">
+                  <label className="text-xs text-gray-500">{t('properties.padding')}</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={element.padding ?? 0}
+                      onChange={handleInputChange('padding')}
+                      className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
+                    />
+                    <span className="absolute right-3 top-2 text-gray-400 text-xs">px</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-gray-500">{t('properties.radius')}</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={element.borderRadius ?? 0}
+                      onChange={handleInputChange('borderRadius')}
+                      className="w-full border rounded-lg px-3 py-2 text-sm pr-8"
+                    />
+                    <span className="absolute right-3 top-2 text-gray-400 text-xs">px</span>
+                  </div>
+                </div>
+              </div>
+
               <button
-                onClick={() => onChange({ backgroundColor: '' })}
-                className="text-xs text-gray-500 hover:text-red-500"
+                onClick={() => onChange({ backgroundColor: '', backgroundOpacity: 1, padding: 0, borderRadius: 0 })}
+                className="text-xs text-gray-500 hover:text-red-500 pt-2"
               >
                 Clear background
               </button>
@@ -519,7 +560,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <Field label="X">
+          <Field label={t('properties.x')}>
             <input
               type="number"
               value={element.x ?? 0}
@@ -527,7 +568,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Y">
+          <Field label={t('properties.y')}>
             <input
               type="number"
               value={element.y ?? 0}
@@ -535,7 +576,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Width">
+          <Field label={t('properties.width')}>
             <input
               type="number"
               value={element.width ?? 0}
@@ -543,7 +584,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Height">
+          <Field label={t('properties.height')}>
             <input
               type="number"
               value={element.height ?? 0}
@@ -554,7 +595,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 mt-3">
-          <Field label="Rotation">
+          <Field label={t('properties.rotation')}>
             <div className="relative">
               <input
                 type="number"
@@ -567,7 +608,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               </div>
             </div>
           </Field>
-          <Field label="Opacity">
+          <Field label={t('properties.opacity')}>
             <input
               type="range"
               min={0}
@@ -584,7 +625,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
       {/* Image Specific */}
       {isImage && (
         <CollapsibleSection
-          title="IMAGE"
+          title={t('properties.image')}
           isCollapsed={collapsedSections.image}
           onToggle={() => toggleSection('image')}
         >
@@ -647,7 +688,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
               />
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="X Offset">
+                <Field label={t('properties.xOffset')}>
                   <input
                     type="number"
                     value={element.shadow.x ?? 0}
@@ -658,7 +699,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                     className="w-full border rounded-lg px-3 py-2 text-sm"
                   />
                 </Field>
-                <Field label="Y Offset">
+                <Field label={t('properties.yOffset')}>
                   <input
                     type="number"
                     value={element.shadow.y ?? 0}
@@ -671,7 +712,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 </Field>
               </div>
 
-              <Field label="Blur Radius">
+              <Field label={t('properties.blurRadius')}>
                 <input
                   type="range"
                   min="0"
@@ -701,7 +742,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
 
       {/* Stroke Section */}
       <CollapsibleSection
-        title="STROKE"
+        title={t('properties.stroke')}
         isCollapsed={collapsedSections.stroke}
         onToggle={() => toggleSection('stroke')}
       >
@@ -727,7 +768,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 t={t}
               />
 
-              <Field label="Width">
+              <Field label={t('properties.width')}>
                 <input
                   type="range"
                   min="0"
@@ -759,17 +800,17 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
       {/* Shape Specific */}
       {isShape && (
         <CollapsibleSection
-          title="SHAPE"
+          title={t('properties.shape')}
           isCollapsed={collapsedSections.shape}
           onToggle={() => toggleSection('shape')}
         >
           <div className="space-y-3">
-            <div className="flex bg-gray-100 p-1 rounded-lg">
+            <div className="flex gap-2 mb-3">
               <button
                 onClick={() => onChange({ gradient: { ...element.gradient, enabled: false } })}
                 className={`flex-1 text-xs py-1.5 rounded-md transition-all ${!element.gradient?.enabled ? 'bg-white shadow text-purple-700 font-medium' : 'text-gray-500'}`}
               >
-                Solid
+                {t('properties.solid')}
               </button>
               <button
                 onClick={() => {
@@ -788,6 +829,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                 }}
                 className={`flex-1 text-xs py-1.5 rounded-md transition-all ${element.gradient?.enabled ? 'bg-white shadow text-purple-700 font-medium' : 'text-gray-500'}`}
               >
+                {t('properties.gradient')}
               </button>
             </div>
 
@@ -811,19 +853,27 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                       { color: element.gradient?.end || '#ffffff', opacity: element.gradient?.endOpacity ?? 1, position: element.gradient?.endPosition ?? 100 }
                     ]).sort((a, b) => a.position - b.position)
                       .map(s => {
-                        const r = parseInt(s.color.slice(1, 3), 16);
-                        const g = parseInt(s.color.slice(3, 5), 16);
-                        const b = parseInt(s.color.slice(5, 7), 16);
-                        return `rgba(${r},${g},${b},${s.opacity}) ${s.position}%`;
+                        return `${hexToRgba(s.color, s.opacity ?? 1)} ${s.position}%`;
                       }).join(', ')
-                      })`
+                      })`,
+                    backgroundImage: `linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%), linear-gradient(90deg, ${(element.gradient?.stops || [
+                      { color: element.gradient?.start || '#000000', opacity: element.gradient?.startOpacity ?? 1, position: element.gradient?.startPosition ?? 0 },
+                      { color: element.gradient?.end || '#ffffff', opacity: element.gradient?.endOpacity ?? 1, position: element.gradient?.endPosition ?? 100 }
+                    ]).sort((a, b) => a.position - b.position)
+                      .map(s => {
+                        return `${hexToRgba(s.color, s.opacity ?? 1)} ${s.position}%`;
+                      }).join(', ')
+                      })`,
+                    backgroundSize: '8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%',
+                    backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px, 0 0',
+                    backgroundColor: '#fff'
                   }}
                 />
 
                 {/* Stops List */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-gray-700">Stops</label>
+                    <label className="text-xs font-semibold text-gray-700">{t('properties.stops')}</label>
                     <div className="flex gap-1">
                       <button
                         onClick={() => {
@@ -836,7 +886,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                           onChange({ gradient: { ...element.gradient, stops } });
                         }}
                         className="p-1 hover:bg-gray-200 rounded text-gray-500"
-                        title="Reverse Gradient"
+                        title={t('properties.reverseGradient')}
                       >
                         <ArrowRightLeft size={14} />
                       </button>
@@ -853,7 +903,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                           onChange({ gradient: { ...element.gradient, stops } });
                         }}
                         className="p-1 hover:bg-gray-200 rounded text-gray-500"
-                        title="Add Stop"
+                        title={t('properties.addStop')}
                       >
                         <Plus size={14} />
                       </button>
@@ -868,7 +918,15 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                     .map((stop, index, arr) => (
                       <div key={stop.id || index} className="p-2 bg-gray-50 rounded-lg border border-gray-100 relative group">
                         <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 rounded border shadow-sm overflow-hidden relative">
+                          <div
+                            className="w-8 h-8 rounded border shadow-sm overflow-hidden relative"
+                            style={{
+                              backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)',
+                              backgroundSize: '8px 8px',
+                              backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px',
+                              backgroundColor: '#fff'
+                            }}
+                          >
                             <input
                               type="color"
                               value={stop.color}
@@ -878,7 +936,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                               }}
                               className="opacity-0 w-full h-full cursor-pointer absolute inset-0"
                             />
-                            <div className="w-full h-full pointer-events-none" style={{ backgroundColor: stop.color }} />
+                            <div className="w-full h-full pointer-events-none" style={{ backgroundColor: hexToRgba(stop.color, stop.opacity ?? 1) }} />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
@@ -910,7 +968,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                         <div className="space-y-1">
                           {/* Position */}
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-gray-500 w-8">Pos</span>
+                            <span className="text-[10px] text-gray-500 w-8">{t('properties.posShort') || 'Pos'}</span>
                             <input
                               type="range"
                               min="0"
@@ -938,7 +996,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                           </div>
                           {/* Opacity */}
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-gray-500 w-8">Opac</span>
+                            <span className="text-[10px] text-gray-500 w-8">{t('properties.opacShort') || 'Opac'}</span>
                             <input
                               type="range"
                               min="0"
@@ -969,7 +1027,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
                     ))}
                 </div>
 
-                <Field label="Angle">
+                <Field label={t('properties.angle')}>
                   <div className="flex items-center gap-2">
                     <input
                       type="range"
@@ -997,7 +1055,7 @@ export default function PropertiesPanel({ element, onChange, canvasSize }) {
       )}
 
       <div className="pt-4 border-t border-gray-100">
-        <Field label="Variable Name">
+        <Field label={t('properties.variableName')}>
           <input
             type="text"
             value={element.variableName || ''}
@@ -1090,4 +1148,12 @@ function StyleButton({ active, onClick, icon }) {
       {icon}
     </button>
   );
+}
+
+function hexToRgba(hex, opacity = 1) {
+  if (!hex) return 'rgba(0, 0, 0, 1)';
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }

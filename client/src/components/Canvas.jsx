@@ -312,6 +312,7 @@ export default function Canvas({
 
 // Convert to forwardRef to expose DOM node
 const CanvasLayer = memo(forwardRef(({ element, index, isSelected, onStartDrag, onSelect, onStartResize }, ref) => {
+  if (element.visible === false) return null;
   return (
     <div
       ref={ref}
@@ -487,13 +488,18 @@ const TextRenderer = ({ el }) => {
   const processedText = keepEmojiWithWord((el.content_preview || el.content || '').replace(/\\n/g, '\n')).trim();
   const overflowWrapValue = el.wordBreak ? 'anywhere' : 'normal';
 
+  // Calculate background color with opacity
+  const bgColor = el.backgroundColor ? hexToRgba(el.backgroundColor, el.backgroundOpacity ?? 1) : 'transparent';
+
   return (
     <div
       ref={containerRef}
       className="w-full h-full flex"
       style={{
         alignItems: resolveAlignItems(el.verticalAlign),
-        backgroundColor: el.backgroundColor || 'transparent',
+        backgroundColor: bgColor,
+        borderRadius: el.borderRadius || 0,
+        padding: el.padding ? `${el.padding}px` : undefined,
         overflow: 'hidden',
         border: el.stroke && el.type !== 'text' ? `${el.stroke.width}px solid ${el.stroke.color}` : undefined,
       }}
@@ -584,15 +590,32 @@ const parseHighlightedText = (text, highlightColor, padding = 3, radius = 6, mod
   });
 };
 
-const parseQuotes = (text, quoteSettings) => {
-  if (!text || !quoteSettings?.enabled) return text;
+const parseQuotes = (input, quoteSettings) => {
+  if (!input || !quoteSettings?.enabled) return input;
 
+  // Handle array input (recursion for mixed content from highlight parser)
+  if (Array.isArray(input)) {
+    return input.map((item, index) => (
+      <React.Fragment key={index}>
+        {parseQuotes(item, quoteSettings)}
+      </React.Fragment>
+    ));
+  }
+
+  // Base case: input must be string
+  if (typeof input !== 'string') return input;
+
+  const text = input;
   const borderColor = quoteSettings.borderColor || '#9333ea';
   const bgColor = quoteSettings.backgroundColor || '#f3e8ff';
   const borderWidth = quoteSettings.borderWidth || 4;
 
   // Match «text» or "text"
   const quoteRegex = /«([^»]+)»|"([^"]+)"/g;
+
+  // Optimization: check if text contains quotes before splitting
+  if (!text.match(quoteRegex)) return text;
+
   const parts = text.split(quoteRegex);
 
   return parts.map((part, index) => {

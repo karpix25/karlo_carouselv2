@@ -9,6 +9,7 @@ import ExportSettingsPanel from './components/ExportSettingsPanel';
 import ZoomControls from './components/ZoomControls';
 import TemplateLibrary from './components/TemplateLibrary';
 import useFontLoader from './hooks/useFontLoader';
+import useHistory from './hooks/useHistory';
 import { DEFAULT_FONT } from './constants/fonts';
 import { parseHtml } from './utils/htmlImporter';
 
@@ -32,10 +33,30 @@ const uid = () =>
   (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 
 function App() {
-  const [elements, setElements] = useState([]);
+  const history = useHistory({
+    elements: [],
+    canvasSize: { width: 1600, height: 2000 }
+  });
+
+  const { elements, canvasSize } = history.state;
+  const { undo, redo, canUndo, canRedo } = history;
+
+  const setElements = useCallback((action) => {
+    history.set(prev => {
+      const newElements = typeof action === 'function' ? action(prev.elements) : action;
+      return { ...prev, elements: newElements };
+    });
+  }, [history]);
+
+  const setCanvasSize = useCallback((action) => {
+    history.set(prev => {
+      const newSize = typeof action === 'function' ? action(prev.canvasSize) : action;
+      return { ...prev, canvasSize: newSize };
+    });
+  }, [history]);
+
   const [selectedId, setSelectedId] = useState(null);
   const [templateName, setTemplateName] = useState('My Template');
-  const [canvasSize, setCanvasSize] = useState({ width: 1600, height: 2000 });
   const [templates, setTemplates] = useState([]);
   const [currentTemplateId, setCurrentTemplateId] = useState(null);
   const [sizePreset, setSizePreset] = useState('poster');
@@ -239,8 +260,10 @@ function App() {
       const res = await fetch(`/templates/${id}`);
       const data = await res.json();
       setTemplateName(data.name || 'Untitled');
-      setCanvasSize({ width: data.width, height: data.height });
-      setElements(data.elements || []);
+      history.reset({
+        elements: data.elements || [],
+        canvasSize: { width: data.width, height: data.height }
+      });
       setExportSettings(data.exportSettings || DEFAULT_EXPORT_SETTINGS);
       setCurrentTemplateId(data.id);
       setSelectedId(null);
@@ -256,8 +279,10 @@ function App() {
 
   const handleCreateNewTemplate = () => {
     setTemplateName('My Template');
-    setCanvasSize({ width: 1600, height: 2000 });
-    setElements([]);
+    history.reset({
+      elements: [],
+      canvasSize: { width: 1600, height: 2000 }
+    });
     setSelectedId(null);
     setCurrentTemplateId(null);
     setExportSettings(DEFAULT_EXPORT_SETTINGS);
@@ -348,8 +373,10 @@ function App() {
       }
 
       const { width, height, elements: importedElements, name } = importedData;
-      setCanvasSize({ width, height });
-      setElements(importedElements);
+      history.reset({
+        elements: importedElements,
+        canvasSize: { width, height }
+      });
       setTemplateName(name || 'Imported Template');
       setSelectedId(null);
       setCurrentTemplateId(null);
@@ -394,6 +421,10 @@ function App() {
         showGrid={showGrid}
         onToggleGrid={() => setShowGrid((prev) => !prev)}
         onSave={saveTemplate}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={canUndo}
+        canRedo={canRedo}
       />
 
       <div className="flex flex-1 overflow-hidden">

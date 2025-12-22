@@ -89,7 +89,10 @@
         "angle": "Angle",
         "dimensions": "DIMENSIONS",
         "lockAspectRatio": "Lock Aspect Ratio",
-        "variableName": "Variable Name"
+        "variableName": "Variable Name",
+        "posShort": "Pos",
+        "opacShort": "Opac",
+        "reverseGradient": "Reverse Gradient"
     },
     "layers": {
         "title": "LAYERS",
@@ -114,7 +117,11 @@
         "savedLayouts": "Saved layouts",
         "untitled": "Untitled",
         "updated": "Updated",
-        "noTemplates": "No templates yet. Save the current design to create one."
+        "noTemplates": "No templates yet. Save the current design to create one.",
+        "delete": "Delete Template",
+        "deleteConfirm": "Delete \"{name}\"?",
+        "deleteMessage": "This action cannot be undone.",
+        "confirmDelete": "Delete"
     },
     "export": {
         "title": "EXPORT",
@@ -144,13 +151,6 @@
         "cannotDelete": "Cannot delete folder with templates",
         "moveTemplate": "Move Template"
     },
-    "templates": {
-        "delete": "Delete Template",
-        "deleteConfirm": "Delete \"{name}\"?",
-        "deleteMessage": "This action cannot be undone.",
-        "cancel": "Cancel",
-        "confirmDelete": "Delete"
-    },
     "tooltips": {
         "toolbar": {
             "text": "Add a text layer to your canvas",
@@ -165,7 +165,9 @@
             "height": "Canvas height in pixels",
             "lockDimensions": "Maintain aspect ratio when resizing",
             "showGrid": "Show/hide grid on canvas",
-            "save": "Save template to server"
+            "save": "Save template to server",
+            "undo": "Undo last action",
+            "redo": "Redo last action"
         },
         "properties": {
             "font": "Select a font from Google Fonts",
@@ -220,7 +222,9 @@
             "duplicate": "Create a copy of layer",
             "delete": "Delete layer",
             "lock": "Lock layer (prevent moving and editing)",
-            "unlock": "Unlock layer"
+            "unlock": "Unlock layer",
+            "show": "Show layer",
+            "hide": "Hide layer"
         },
         "templates": {
             "createNew": "Create a new blank template",
