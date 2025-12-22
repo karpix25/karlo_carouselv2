@@ -1,6 +1,6 @@
 services:
   export-html:
-    container_name: export-carousel
+    container_name: carousel
     platform: linux/amd64
     user: root
     environment:
