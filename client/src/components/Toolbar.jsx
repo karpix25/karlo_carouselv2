@@ -14,15 +14,15 @@ export default function Toolbar({ onAdd }) {
   const { t } = useTranslation();
 
   return (
-    <div className="w-20 bg-purple-700 text-white flex flex-col items-center py-6 space-y-4 h-full">
-      <div className="rounded-full bg-purple-600 p-3">
-        <Layers size={20} />
+    <div className="w-20 bg-[var(--bg-secondary)] border-r border-[var(--border-color)] text-[var(--text-primary)] flex flex-col items-center py-6 space-y-4 h-full">
+      <div className="w-12 h-12 rounded-2xl bg-[var(--accent-color)]/10 text-[var(--accent-color)] flex items-center justify-center mb-2">
+        <Layers size={22} />
       </div>
       {tools.map((tool) => (
         <Tooltip key={tool.labelKey} text={t(tool.tooltipKey)} position="right">
           <button
             type="button"
-            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-purple-600 hover:bg-white/20 transition"
+            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)]/30 transition-all shadow-sm active:scale-95"
             onClick={() => onAdd(tool.type, tool.props)}
           >
             <tool.icon size={20} />

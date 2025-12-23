@@ -1,3 +1,35 @@
+:root {
+  /* Common */
+  --transition-speed: 0.25s;
+  --font-main: 'Inter', sans-serif;
+
+  /* Cyber Magenta - Light Mode */
+  --bg-main: #f8f8f8;
+  --bg-secondary: #ffffff;
+  --border-color: #f0f0f0;
+  --text-primary: #121212;
+  --text-secondary: #757575;
+  --accent-color: #be185d;
+  --accent-hover: #9d174d;
+  --accent-glow: rgba(190, 24, 93, 0.1);
+  --card-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Cyber Magenta - Dark Mode */
+    --bg-main: #0a0a0a;
+    --bg-secondary: #161616;
+    --border-color: #222222;
+    --text-primary: #ffffff;
+    --text-secondary: #8e8e8e;
+    --accent-color: #be185d;
+    --accent-hover: #9d174d;
+    --accent-glow: rgba(190, 24, 93, 0.2);
+    --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  }
+}
+
 html,
 body,
 #root {
@@ -6,6 +38,16 @@ body,
 
 body {
   margin: 0;
-  background: #f3f4f6;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: var(--font-serif);
 }

@@ -30,11 +30,11 @@ function TemplateItem({ template, onDelete, onClick }) {
             style={style}
             {...attributes}
             {...listeners}
-            className="group flex items-center gap-2 px-3 py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+            className="group flex items-center gap-2.5 px-3 py-2 hover:bg-[var(--bg-main)] hover:border-[var(--accent-color)]/30 border border-transparent rounded-xl cursor-pointer transition-all active:scale-[0.98]"
         >
-            <File size={16} className="text-gray-400 flex-shrink-0" />
+            <File size={14} className="text-[var(--text-secondary)]/40 flex-shrink-0" />
             <span
-                className="flex-1 text-sm text-gray-700 truncate"
+                className="flex-1 text-[11px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] truncate transition-colors"
                 onClick={(e) => {
                     e.stopPropagation();
                     onClick();
@@ -47,10 +47,10 @@ function TemplateItem({ template, onDelete, onClick }) {
                     e.stopPropagation();
                     onDelete();
                 }}
-                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded transition-all"
+                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg transition-all text-[var(--text-secondary)]/40 hover:text-red-500"
                 title={t('templates.delete')}
             >
-                <Trash2 size={14} className="text-red-500" />
+                <Trash2 size={13} />
             </button>
         </div>
     );
@@ -80,24 +80,24 @@ function FolderItem({ folder, templates, onDeleteTemplate, onDeleteFolder, onRen
         <div className="space-y-1">
             <div
                 ref={setNodeRef}
-                className={`group flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${isOver ? 'bg-purple-100 border-2 border-purple-400' : 'hover:bg-purple-50'
+                className={`group flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all border ${isOver ? 'bg-[var(--accent-color)]/[0.03] border-[var(--accent-color)] shadow-sm' : 'border-transparent hover:bg-[var(--bg-main)] hover:border-[var(--border-color)]'
                     }`}
             >
                 <button
                     onClick={onToggle}
-                    className="p-0.5 hover:bg-purple-100 rounded transition-colors"
+                    className="p-1 hover:bg-[var(--bg-secondary)] rounded-lg transition-all text-[var(--text-secondary)] hover:text-[var(--accent-color)]"
                 >
                     {isExpanded ? (
-                        <ChevronDown size={16} className="text-purple-600" />
+                        <ChevronDown size={14} />
                     ) : (
-                        <ChevronRight size={16} className="text-purple-600" />
+                        <ChevronRight size={14} />
                     )}
                 </button>
 
                 {isExpanded ? (
-                    <FolderOpen size={16} className="text-purple-600 flex-shrink-0" />
+                    <FolderOpen size={14} className="text-[var(--accent-color)] flex-shrink-0" />
                 ) : (
-                    <Folder size={16} className="text-purple-600 flex-shrink-0" />
+                    <Folder size={14} className="text-[var(--accent-color)] flex-shrink-0" />
                 )}
 
                 {isEditing ? (
@@ -113,30 +113,32 @@ function FolderItem({ folder, templates, onDeleteTemplate, onDeleteFolder, onRen
                                 setIsEditing(false);
                             }
                         }}
-                        className="flex-1 text-sm font-medium text-gray-900 bg-white border rounded px-2 py-1 outline-none focus:ring-2 focus:ring-purple-500"
+                        className="flex-1 text-[11px] font-bold text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--accent-color)] rounded-lg px-2 py-1 outline-none transition-all"
                         autoFocus
                         onClick={(e) => e.stopPropagation()}
                     />
                 ) : (
                     <span
-                        className="flex-1 text-sm font-medium text-gray-900 truncate cursor-pointer"
+                        className="flex-1 text-[11px] font-bold text-[var(--text-primary)] truncate cursor-pointer transition-colors"
                         onDoubleClick={() => setIsEditing(true)}
                     >
                         {folder.name}
                     </span>
                 )}
 
-                <span className="text-xs text-gray-400">({folderTemplates.length})</span>
+                <span className="text-[10px] font-medium text-[var(--text-secondary)]/40 px-2 py-0.5 bg-[var(--bg-secondary)] rounded-md border border-[var(--border-color)]">
+                    {folderTemplates.length}
+                </span>
 
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         onDeleteFolder();
                     }}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg transition-all text-[var(--text-secondary)]/40 hover:text-red-500"
                     title={t('folders.deleteFolder')}
                 >
-                    <Trash2 size={14} className="text-red-500" />
+                    <Trash2 size={13} />
                 </button>
             </div>
 
@@ -242,14 +244,14 @@ export default function FolderTree({ folders, templates, onMove, onDeleteTemplat
         <>
             <div className="space-y-4">
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-gray-900">{t('folders.title') || 'Templates'}</h2>
+                <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">{t('folders.title') || 'Folders'}</h2>
                     <button
                         onClick={onCreateFolder}
-                        className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                        className="p-1.5 text-[var(--accent-color)] hover:bg-[var(--accent-color)]/10 rounded-lg transition-all"
+                        title={t('folders.newFolder') || 'New Folder'}
                     >
                         <Plus size={16} />
-                        {t('folders.newFolder') || 'New Folder'}
                     </button>
                 </div>
 
