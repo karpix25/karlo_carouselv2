@@ -97,10 +97,10 @@ export default function TemplateLibrary({
 
   return (
     <section>
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-purple-900 uppercase">{t('templates.title')}</h3>
-          <p className="text-xs text-gray-500">
+          <h3 className="text-[11px] font-bold text-[var(--accent-color)] uppercase tracking-wider">{t('templates.title')}</h3>
+          <p className="text-[10px] font-medium text-[var(--text-secondary)]/60">
             {t('templates.savedLayouts') || `Saved layouts (${templates.length})`}
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function TemplateLibrary({
           <button
             type="button"
             onClick={onCreateNew}
-            className="text-xs font-semibold text-purple-700 border border-purple-200 rounded-full px-3 py-1 hover:bg-purple-50"
+            className="text-[10px] font-bold text-[var(--text-primary)] bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full px-4 py-1.5 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)] transition-all shadow-sm"
           >
             + {t('templates.createNew')}
           </button>
@@ -121,16 +121,16 @@ export default function TemplateLibrary({
           <Tooltip text={t('tooltips.templates.import')}>
             <button
               onClick={() => setIsImporting(!isImporting)}
-              className="text-xs text-purple-600 hover:underline"
+              className="text-[10px] font-bold text-[var(--text-secondary)] hover:text-[var(--accent-color)] uppercase tracking-wider transition-all"
             >
               {isImporting ? t('templates.cancel') : t('templates.import')}
             </button>
           </Tooltip>
-          <span className="text-gray-300">|</span>
+          <span className="text-[var(--border-color)]">|</span>
           <Tooltip text={t('tooltips.templates.export')}>
             <button
               onClick={onExport}
-              className="text-xs text-purple-600 hover:underline"
+              className="text-[10px] font-bold text-[var(--text-secondary)] hover:text-[var(--accent-color)] uppercase tracking-wider transition-all"
             >
               {t('templates.export')}
             </button>
@@ -138,12 +138,12 @@ export default function TemplateLibrary({
         </div>
 
         {isImporting && (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+          <div className="space-y-3 p-4 bg-[var(--bg-main)] rounded-2xl border border-[var(--border-color)]">
             <textarea
               value={importCode}
               onChange={(e) => setImportCode(e.target.value)}
               placeholder={t('templates.pasteHtml')}
-              className="w-full text-xs font-mono border rounded-lg p-2 h-24 focus:outline-none focus:ring-1 focus:ring-purple-500"
+              className="w-full text-xs font-mono bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl p-3 h-32 focus:outline-none focus:border-[var(--accent-color)] transition-all resize-none text-[var(--text-primary)]"
             />
             <button
               onClick={() => {
@@ -154,7 +154,7 @@ export default function TemplateLibrary({
                 }
               }}
               disabled={!importCode.trim()}
-              className="w-full bg-purple-600 text-white text-xs font-semibold py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              className="w-full bg-[var(--accent-color)] text-white text-[11px] font-bold py-2.5 rounded-xl hover:bg-[var(--accent-hover)] transition-all shadow-md shadow-[var(--accent-glow)] disabled:opacity-50 disabled:shadow-none uppercase tracking-wider"
             >
               {t('templates.import')}
             </button>
@@ -165,7 +165,7 @@ export default function TemplateLibrary({
       {/* Folder Tree */}
       <div className="max-h-96 overflow-auto pr-1">
         {templates.length === 0 ? (
-          <div className="text-xs text-gray-500 border border-dashed rounded-xl px-3 py-4 text-center">
+          <div className="text-[10px] text-[var(--text-secondary)] border border-dashed border-[var(--border-color)] rounded-2xl px-4 py-8 text-center font-medium">
             {t('templates.noTemplates') || 'No templates yet. Save the current design to create one.'}
           </div>
         ) : (

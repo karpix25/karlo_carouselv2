@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/templates': 'http://localhost:2305',
+      '/folders': 'http://localhost:2305',
       '/1': 'http://localhost:2305',
       '/check-status': 'http://localhost:2305',
       '/health': 'http://localhost:2305',

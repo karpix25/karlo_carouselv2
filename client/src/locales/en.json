@@ -8,15 +8,15 @@
     "topbar": {
         "templateName": "Template Name",
         "preset": "Preset",
-        "customSize": "Custom Size",
-        "instagramStory": "Instagram Story",
-        "poster": "Poster",
-        "a4Portrait": "A4 Portrait",
         "width": "Width",
         "height": "Height",
         "lockDimensions": "Lock Dimensions",
         "showGrid": "Show Grid",
-        "save": "Save"
+        "save": "Save",
+        "custom": "Custom Size",
+        "story": "Instagram Story",
+        "poster": "Poster",
+        "a4": "A4 Portrait"
     },
     "properties": {
         "selectLayer": "Select a layer to edit its properties.",
@@ -89,17 +89,34 @@
         "angle": "Angle",
         "dimensions": "DIMENSIONS",
         "lockAspectRatio": "Lock Aspect Ratio",
-        "variableName": "Variable Name"
+        "variableName": "Variable Name",
+        "posShort": "Pos",
+        "opacShort": "Opac",
+        "reverseGradient": "Reverse Gradient",
+        "clearBackground": "Clear background",
+        "enterFontName": "Enter Google Font name...",
+        "enterPreviewText": "Enter test text to preview styles...",
+        "variableNamePlaceholder": "e.g. product_name",
+        "quoteHint": "💡 Use «text» or \"text\" in your content for quotes",
+        "defaultText": "Your text here"
     },
     "layers": {
         "title": "LAYERS",
-        "noLayers": "No layers",
+        "noLayers": "No layers and yet. Start by adding one from the toolbar.",
         "moveUp": "Move Up",
         "moveDown": "Move Down",
-        "duplicate": "Duplicate",
-        "delete": "Delete",
-        "lock": "Lock",
-        "unlock": "Unlock",
+        "duplicate": "Duplicate Layer",
+        "delete": "Delete Layer",
+        "lock": "Lock Layer",
+        "unlock": "Unlock Layer",
+        "hide": "Hide Layer",
+        "show": "Show Layer",
+        "top": "Move to Front",
+        "bottom": "Move to Back",
+        "textLayer": "Text Layer",
+        "imageLayer": "Image Layer",
+        "shapeLayer": "Shape Layer",
+        "layer": "Layer",
         "doubleClickRename": "Double-click to rename"
     },
     "templates": {
@@ -114,7 +131,12 @@
         "savedLayouts": "Saved layouts",
         "untitled": "Untitled",
         "updated": "Updated",
-        "noTemplates": "No templates yet. Save the current design to create one."
+        "noTemplates": "No templates yet. Save the current design to create one.",
+        "delete": "Delete Template",
+        "deleteConfirm": "Delete \"{name}\"?",
+        "deleteMessage": "This action cannot be undone.",
+        "confirmDelete": "Delete",
+        "defaultName": "My Template"
     },
     "export": {
         "title": "EXPORT",
@@ -137,19 +159,13 @@
         "apiIntegration": "API Integration"
     },
     "folders": {
-        "title": "Templates",
+        "title": "Folders",
         "newFolder": "New Folder",
-        "renameFolder": "Rename Folder",
+        "rename": "Rename (Double Click)",
         "deleteFolder": "Delete Folder",
         "cannotDelete": "Cannot delete folder with templates",
-        "moveTemplate": "Move Template"
-    },
-    "templates": {
-        "delete": "Delete Template",
-        "deleteConfirm": "Delete \"{name}\"?",
-        "deleteMessage": "This action cannot be undone.",
-        "cancel": "Cancel",
-        "confirmDelete": "Delete"
+        "moveTemplate": "Move Template",
+        "items": "items"
     },
     "tooltips": {
         "toolbar": {
@@ -165,7 +181,9 @@
             "height": "Canvas height in pixels",
             "lockDimensions": "Maintain aspect ratio when resizing",
             "showGrid": "Show/hide grid on canvas",
-            "save": "Save template to server"
+            "save": "Save template to server",
+            "undo": "Undo last action",
+            "redo": "Redo last action"
         },
         "properties": {
             "font": "Select a font from Google Fonts",
@@ -220,7 +238,9 @@
             "duplicate": "Create a copy of layer",
             "delete": "Delete layer",
             "lock": "Lock layer (prevent moving and editing)",
-            "unlock": "Unlock layer"
+            "unlock": "Unlock layer",
+            "show": "Show layer",
+            "hide": "Hide layer"
         },
         "templates": {
             "createNew": "Create a new blank template",
@@ -245,6 +265,32 @@
         "close": "Close",
         "ok": "OK",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "russian": "Russian",
+        "english": "English",
+        "saveSuccess": "Template saved",
+        "saveError": "Failed to save template",
+        "importSuccess": "Template imported successfully!",
+        "importError": "Failed to parse template (HTML or JSON)"
+    },
+    "dashboard": {
+        "allDesigns": "All Designs",
+        "createNew": "Create New",
+        "myDesigns": "My Designs",
+        "newFolder": "New Folder",
+        "newDesign": "New Design",
+        "searchPlaceholder": "Search by name...",
+        "nothingFound": "Nothing found",
+        "tryChangingQuery": "Try changing your query or create a new design",
+        "project": "Project",
+        "files": "files",
+        "manageTemplates": "Manage your templates and projects",
+        "emptyProject": "Empty Project",
+        "viewProject": "View Project",
+        "createFolderTitle": "Create New Folder",
+        "createFolderHint": "Enter a name for your new project",
+        "folderNameLabel": "Folder Name",
+        "folderNamePlaceholder": "e.g. Instagram Posts",
+        "template": "Template"
     }
 }

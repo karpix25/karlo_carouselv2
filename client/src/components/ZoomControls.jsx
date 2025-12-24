@@ -14,11 +14,11 @@ export default function ZoomControls({ zoom, onZoomChange }) {
   };
 
   return (
-    <div className="bg-white border-t px-6 py-3 flex items-center justify-center gap-3">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl px-5 py-2.5 flex items-center justify-center gap-4 shadow-sm backdrop-blur-md">
       <ZoomButton disabled={zoom <= MIN_ZOOM} onClick={() => handleStep('out')}>
         <Minus size={16} />
       </ZoomButton>
-      <span className="text-sm font-semibold text-gray-700 w-14 text-center">{formatZoom}%</span>
+      <span className="text-[11px] font-bold text-[var(--text-primary)] w-10 text-center">{formatZoom}%</span>
       <ZoomButton disabled={zoom >= MAX_ZOOM} onClick={() => handleStep('in')}>
         <Plus size={16} />
       </ZoomButton>
@@ -29,7 +29,7 @@ export default function ZoomControls({ zoom, onZoomChange }) {
         step={0.05}
         value={zoom}
         onChange={(e) => onZoomChange(parseFloat(e.target.value))}
-        className="flex-1"
+        className="w-24 accent-[var(--accent-color)] h-1"
       />
     </div>
   );
@@ -39,10 +39,10 @@ function ZoomButton({ children, ...rest }) {
   return (
     <button
       type="button"
-      className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center"
+      className="w-8 h-8 rounded-lg border border-[var(--border-color)] bg-[var(--bg-main)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)]/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm active:scale-95"
       {...rest}
     >
-      {children}
+      {React.cloneElement(children, { size: 14 })}
     </button>
   );
 }

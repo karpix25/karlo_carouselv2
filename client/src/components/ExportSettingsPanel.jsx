@@ -78,7 +78,7 @@ export default function ExportSettingsPanel({ settings, onChange, elements = [],
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 overflow-y-auto max-h-full scrollbar-hide pb-10">
       <SettingsCard
         title={t('export.imageSettings') || 'Image settings'}
         isCollapsed={collapsedSections.image}
@@ -171,11 +171,11 @@ export default function ExportSettingsPanel({ settings, onChange, elements = [],
         onToggle={() => toggleSection('api')}
       >
         <div className="space-y-3">
-          <p className="text-xs text-gray-500">
+          <p className="text-[11px] font-medium text-[var(--text-secondary)] leading-relaxed">
             Use this cURL command to generate an image from this template via API.
           </p>
-          <div className="relative">
-            <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap">
+          <div className="relative group">
+            <pre className="bg-[var(--bg-main)] text-[var(--text-primary)] p-4 rounded-xl text-[10px] overflow-x-auto font-mono whitespace-pre-wrap border border-[var(--border-color)]">
               {getApiPreview()}
             </pre>
             <button
@@ -186,7 +186,7 @@ export default function ExportSettingsPanel({ settings, onChange, elements = [],
               {copied ? <Check size={14} /> : <Copy size={14} />}
             </button>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-[10px] text-[var(--text-secondary)]/40 font-medium italic">
             💡 Make sure to define "Variable Name" for elements you want to change dynamically.
           </p>
         </div>
@@ -197,27 +197,27 @@ export default function ExportSettingsPanel({ settings, onChange, elements = [],
 
 function SettingsCard({ title, children, isCollapsed, onToggle }) {
   return (
-    <div className="border rounded-2xl overflow-hidden">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between bg-purple-50 hover:bg-purple-100 px-4 py-3 transition-colors"
+        className="w-full flex items-center justify-between bg-[var(--bg-secondary)] hover:bg-[var(--bg-main)] px-4 py-4 transition-all group"
       >
-        <h3 className="text-sm font-semibold text-purple-900 uppercase">{title}</h3>
+        <h3 className="text-[11px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] uppercase tracking-wider">{title}</h3>
         <ChevronDown
-          size={20}
-          className={`text-purple-900 transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+          size={18}
+          className={`text-[var(--text-secondary)] group-hover:text-[var(--accent-color)] transition-transform duration-300 ${isCollapsed ? '' : 'rotate-180'}`}
         />
       </button>
-      {!isCollapsed && <div className="p-4 space-y-3">{children}</div>}
+      {!isCollapsed && <div className="p-4 pt-0 space-y-4">{children}</div>}
     </div>
   );
 }
 
 function SettingsField({ label, children }) {
   return (
-    <label className="text-xs text-gray-600 uppercase tracking-wide space-y-1 block">
+    <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider space-y-2 block">
       {label}
-      <div className="text-sm text-gray-800 border rounded-lg px-3 py-2 bg-white">{children}</div>
+      <div className="text-sm text-[var(--text-primary)] bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl px-3 py-2.5 focus-within:border-[var(--accent-color)]/50 transition-all font-medium">{children}</div>
     </label>
   );
 }

@@ -13,36 +13,38 @@ export default function DeleteConfirmModal({ isOpen, title, message, onConfirm, 
             />
 
             {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 space-y-4">
+            <div className="relative bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-3xl shadow-2xl max-w-sm w-full mx-4 p-8 space-y-6">
                 {/* Close button */}
                 <button
                     onClick={onCancel}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute top-6 right-6 text-[var(--text-secondary)]/40 hover:text-[var(--text-primary)] transition-all"
                 >
                     <X size={20} />
                 </button>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-gray-900 pr-8">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] pr-8 leading-tight">
                     {title}
                 </h2>
 
                 {/* Message */}
-                <p className="text-gray-600 text-sm">
+                <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed">
                     {message}
                 </p>
 
                 {/* Actions */}
                 <div className="flex gap-3 pt-2">
-                    <button
-                        onClick={onCancel}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
-                    >
-                        {cancelText}
-                    </button>
+                    {cancelText && (
+                        <button
+                            onClick={onCancel}
+                            className="flex-1 px-4 py-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-2xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all font-bold text-xs uppercase tracking-wider"
+                        >
+                            {cancelText}
+                        </button>
+                    )}
                     <button
                         onClick={onConfirm}
-                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                        className="flex-1 px-4 py-3 bg-red-500 text-white rounded-2xl hover:bg-red-600 transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20"
                     >
                         {confirmText}
                     </button>
